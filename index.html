@@ -1,0 +1,316 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>적도 좌표계 기초 학습 시뮬레이션</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+@font-face{font-family:'a시네마';src:local('a시네마L'),local('a시네마M'),local('a시네마');}
+:root{--bg:#0b1026;--pn:#141c3d;--ln:#2b3768;--tx:#e6ecff;--y:#ffd166;--c:#4dd9e8;--r:#ff7aa2;--g:#7ee081;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit;font-family:'a시네마','Malgun Gothic','Apple SD Gothic Neo',sans-serif;font-weight:normal!important}
+body{margin:0;background:var(--bg);color:var(--tx);line-height:1.65}
+.wrap{max-width:980px;margin:auto;padding:14px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--ln);padding-bottom:10px}
+header h1{font-size:1.35rem;margin:0}
+.brand{display:flex;align-items:center;gap:10px;margin-left:auto;text-align:right;font-size:.85rem}
+.brand img{height:54px;width:54px}
+.sub{color:#9fb0e6;font-size:.9rem}
+nav{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+nav button{flex:1;min-width:90px}
+button{background:var(--pn);color:var(--tx);border:1px solid var(--ln);border-radius:8px;padding:8px 12px;cursor:pointer;font-size:.95rem}
+button:hover:not(:disabled){border-color:var(--c)}
+button.on{background:#22306a;border-color:var(--y);color:var(--y)}
+button.lock{opacity:.4;cursor:not-allowed}
+button.go{background:#17424a;border-color:var(--c);color:var(--c)}
+.pn{background:var(--pn);border:1px solid var(--ln);border-radius:12px;padding:14px;margin:10px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+.k{color:var(--y)}.c{color:var(--c)}.r{color:var(--r)}.g{color:var(--g)}
+h2{font-size:1.2rem;color:var(--y);margin:.2em 0}
+h3{font-size:1.05rem;color:var(--c);margin:.4em 0}
+svg{width:100%;height:auto;background:#070b1d;border-radius:10px;touch-action:none}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+td,th{border-bottom:1px solid var(--ln);padding:5px;text-align:center}
+th{color:var(--c)}
+input[type=range]{width:100%}
+input[type=text],textarea{width:100%;background:#070b1d;color:var(--tx);border:1px solid var(--ln);border-radius:8px;padding:8px;font-size:.95rem}
+.fb{margin-top:8px;padding:8px 10px;border-radius:8px;background:#0e1636;border-left:4px solid var(--ln)}
+.fb.ok{border-color:var(--g)}.fb.no{border-color:var(--r)}
+.opt{display:block;width:100%;text-align:left;margin:5px 0}
+.opt.right{border-color:var(--g);color:var(--g)}.opt.wrong{border-color:var(--r);color:var(--r)}
+.bar{height:10px;background:#0e1636;border-radius:6px;overflow:hidden}.bar i{display:block;height:100%}
+.hid{display:none}
+#rp{background:var(--pn);border:1px solid var(--ln);border-radius:12px;padding:16px}
+.grade{font-size:4rem;line-height:1}
+.tg{display:flex;flex-wrap:wrap;gap:6px}
+.tg button{padding:6px 10px}
+#shot img{max-width:100%;border-radius:8px;margin-top:8px}
+</style></head><body><div class="wrap">
+<header>
+ <div><h1>적도 좌표계 기초 학습 시뮬레이션</h1><div class="sub">지구과학Ⅱ · 수성·화성 역행 분석 전 선행 미션 (STAGE A ~ C)</div></div>
+ <div class="brand"><div><span class="k">EARTH LJY</span><br>earthljy@ai.jne.kr</div><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAACgCAYAAACLz2ctAABaXUlEQVR42u2dd3gd1Zn/P+fMzK3q3ZZVLFe5YmywMTYtEFpCDQmBULLpvbAksMkvS0g2sJuyaaSSJaQHQuiQYAhgG4ML7t2SbXVZXbffOzPn/P64xZJl0zYbG6L3ee4j6Wru3Cnfeev3fY/QWmvGZVyOk8jxSzAu4wAcl3EAjsu4jANwXMYBOC7jMg7AcRkH4LiMyzgAx2UcgOMyLuMAHJdxAI7LuIwDcFzGATgu4zIOwDet6MxrXLJijl+CIyByBDtNCHGsDUnZNq7r4miNyDzNUkgsy8Qw5VGe7xQg0Fi4WiDQyFf6jn8CEeN8wFeWWCxGR0cHra2ttLa20nNokEP9fQwM9xMa7seJxVAuICRSCqQp8Qf8FBfkU1RQSGFJORNq66mtn0JNzSQmVFXgM2UGmhpQgDGuAf+Ztd1IDRSPx9m/fz/btm3j5U0b2b59O91d3URjUeyUjVTgCo0yTKQWWC5YrsSVGmUokAbKgZQQoBNYKoE0DJQnn8LCEibX1DBv7mwWnnwSc2fPom5yPeKf2BH6p9SASimEEDngpVIpdu7cydNPP82qVatoaWkhFAphKxcpDUzDwDANtNa4OHiExNACI+An6ZGYpkZIRTQeJzXkUu6pIn9CFSnDxolFSESGSMUjqGQSlUqmnW+Pj8LSKmbPns35553D6aefzuTJk495jOMAfAtKX18fT694mkcefYRtW7cSjoQxDBMhBFJKhGXiKkVeXh52KoUwDBrPuZTd69cT697JrPOmUnhmDSnDxmMYxAZitK5tJ7IzhjduUFw7k4UX30BSBokN9RDq6aD7wC76D+4gOdSNm4yjHBdDGlRUVLJ48WKuuOIKTjvtNHw+37gGfEsEnS4gNVpoRMbWtba086f7H+KJJ59g/4G9aGFjeiHfDBLTClfalE6rJNoXYWJ5MYGzJ9P0++coDc5m8Ue/wf49bWz9w+3kN7hM/sRMYp4YHttE4kXiQYZtWh7YQfsmh/M/8y3yq09CaoE2wHRtUtFDhLv309O0m8592wh17UCEh9AJL8IvmXfyXK687N2848LzKCgswQUcwPsWvEXGbbfddttb9/FK40/ItCnr6u7hZz/7KV/5xq385dknGBzuxzQEPtOLP78cs7AQNzREXm0xodgwscEk/ZEIw84wZdWVtG/vxF9QQ+3pZzPcvIVwRzeli8uwfQrDVWjpkDBdpFfSvamTIreamWdehi3z0UrjoFDawPHn4S+tZlLDfOprpzPY0UaktweJF6UUnW0drHjmBf72wiqkBTOn1OM1vW/JW/SWdn81GikhEU/y+1/9kRuvvo6ffPcuQgfD5HvymTS1jtJJVSTRxGJDROw+hmstwoNxCkNFTGqcRzCZT3BTGOHxo/LihA5sIabC9MQTqKhGRZJ4tIVlWjiOw+CObrb/6CX6Noaor5tL0FeA17TwmRKBQqBAQUoZxA0/+1sPcXDvAYrrS5hw/gR8i/LxVEq8Msaebbv4ty9+jWv/5cM898LK8Sj4zRRkSCkRCHZu38F37vwOL73wIikZQxU4+BsqmHL2NAqmF+DYDmKDxBq0MQY03pY4waIpVE6fx8t/e5CypEPlFYtoad+Nd9imeloj0YEwA70dzJ1ZTbA4SLdQDL1wkOFnm4j1eigumcnyC89CDSb5y69/gOkvpLpuBtWLTkPhxUCiNChpYnkUkn4aTp+GcVY+hZFSjE5J9642Btd1oLscNq3azMc3fZar3v1OPvGJT1BRUYHWGq01UspxAJ5wal1KUqkU9/zyl/zs5z+nv3cI4Rf4aoLMPmsawXl5xAsTdMZbOLS5h8SeGKnuBEJMYPGCd1F70gJ6QocoK6kh2nGAjS+/jNEZ4cwzbqTo1AvpaxvAG+vHbCjFDSr6ntvNgYdaWDDhXGZc8U6KZ89Be308+e3b6T/wHJYWODPOZNJJC9CWH0MrpNYIJ0FRRTn4S+iPxSny+tm3ppnwymHq59Qy74bFHNrbQddz7Ti9Ke795b2sXbuWW265hbPOOustESG/ZYIQjcbVClMYdLW38rX/+C+eeup5hKtRZS61Z9Uw6bQa3EKXmCdMIgo7f/Uy1nYvDfVLqZ53ChWzT6U11s2GX9yFioWYsWwZeQGLlp3bmVDcQN27P0DcX0lwaIinfvJ5XNFC0RRB1/pOZs27knlXfJpYoArDtpHaIdq+l1DnTvyWScnEmbgVk3HxYGqBIxUCjYj08uj3/40JU/uovWE6Xbv66bx3DyLq4NR5aLxgCf4izb6/baT/pTAiYVAYKOS666/nk5/6OIGAL+3nZv0pnfljPAj5R8cbAikkGzZt5jNf+CJrVq/BMFwKZucz/6o5FJ9eTKgwRMSMIQwv3X85QHidzfmXfo7GC9+LZ/Jsek3B1t//An90D+Uzymjb1IytoLxxHidf/F4cipCOwPRLCgtLObSrnaGWGNPmnM2iC68j6q8ipSxM7SK0wiquJK9mLt4JM3HzSkFJhJbYhiYlbZzEIHm+fGKHBmjZuJpUKkywvIiyhlqkayLbw7TubqXstImUn1FDQXEx0d5+nL4469ZvYs+BAyxccBKFBfkZ4GnSSlGMA/B4yBOPP8nNN32FAy0dGAUODcsn0nDtdNwazbARwRYuWhh4HT+hF9owe4JMW3oZsaqpOIkoq3//U+JtL3LS9fMJnlJI99a9hHcdJKlNJp12FrgFCGFgG4Kyimoa553G9FPPpW7hWSR9ZSTwYQjwinSy2dUCrRVolb7YWuBIgfRoWl9ezerf/gTXTTJ96XKG+sIcWn+QgU0dJBMO4WSYicEykv1JosImf3Yxnskm1dMmEQqFifaFObCzmZfXbWTe3DlUVFUgcFFoxJsotnzLAPCXv/sNt3z9q7gDIfLyNY1XzKLsojqigRgp4SAwMJUXS3lwLRsd9NK9qZmhnV2UNU5lwzOPIF56lMbrZhBbHCSeH6GysQb6hnG741Q3noxdUYFG4EqBjYlhFqKDZcSkH1tYIAWmcBE6DXQygRBSAAIlBSkJQZVg74O/xdn/IoPNLzHU3cbyK95Hw8lvpyqvgY4Xt2OmHEK2gc8qYrivl6mzK4kWDBEptSif04CRShHt6KGju5c1q1Yyd9YsJk6qxdUKKcYB+A+Ve+65h2/d8U10wsGoFsx733wCp+Yx6BlCa43QAoFAC42SDq6A/LIiivLzadm0i0PrtjLcvYNZ75pA8PQCIiqJVznIIo1tClo2NNG15SAllRMoLp9ISgiU0EitUUKjAInC0C4CgSstlDDQCLQAjUQLkFoiDUFf0y62rbiP2iV5TFpUQPPqlwn6plC17BzaB9rp3raJgsIgAwNDeJIpSucXElhUDBKEVgjTpbyxCgp9DB8YYmignzUrX2DGzNnU19WNJ6L/ERUOrTVCCH5xz8/45n9+G5VMUVLjp/GGU4jPN4gYIbwOaJkGAUKhpYuSGq0tLG3hJjV7tu1ialU5C94zm/ASSUxG8SsPJuAqm6KJxVi+IIMbt+FPWdTMX04SidQKmWWzCI0k7X9pIVBCQhp+ow9bSwJSs3PVY/TuX4e3QHNwYAARkXS3dBKLhiku8dGxcS1mSYqJp5YwaWklE86pYyg/hXQNTBTgErYUBZOrKC7Oo3d/J4muGGtWr2X63NnU1UzK1ZLHE9H/V0GHFPzhN7/ju9/6bxIqTnB6IXNuXIScLInpCGmGnokgbQYFEqlNTGVgEicpo/grLU6/cSk1H57F4KwkKRJYcS/hbYN0ruog3uTS9vJBeoYSpIKChN9PyrAwlMZQOQZg2rwKiRJpSErtphPOOQJq+qWNNAewsqKU/LIanN4S8vsmE0gEqChJ0Lb2EZzhfsw8H1OX1DH5igbUsgADwRiWo5C42FLhSIHPlmgnTNGSfE569wLsCkVHfztf+Neb2Lx5M1JKlFLjaZj/K3n6mae59ZO3MhQfxjvDyynXLyVeaxNzw2C6aCFAm8gjCaZopE4QNwUSAxOTqNAYrovXlbQ8eZCepwfw2F5sGacw4Ec75Yiubhrf8T6mXvYxEk4aUFkNo8Rr4zlrTAzl4FcR3FgIaZgM9LTx1A+/yuQJBuGhGEmZR7gwzhkfX0C4NISDRmKA4SA1aBRCS6QSoBSOdAnqAoY3D7P9t5uxDhnMmD2Tn/3sp9TU1IxrwL+r5c2AaceuHXzlK/+P/vggVo2fk9+zmHhNin7PMMpykRqESvtdY0EgSIkgSgcwXA+eBOSlwOO4BGwP4Q4bS1dw0SUfYs78izn7gg/ReOqFxISio3szKTsMr2DashSqka/DX65whCRq5JHIn0gkOAFvzRxqT307PbafhDCRgz3UnVZNtDRF0khiIDC0wNUaWxho4UUJk5QJKUsjhUn/wAAJJ0lFdSWmz2T37l185StfIRqN5ipD4z7g30NdC0FPTw+f+9TnaG46gCpzWXjNIvQMg5AVxuMCGGhhIARIrY6aE9NIXCGwVPqFaaAw0MOa5J444eYoofAQAwcPYBsBpi69lOGeASZNnk3x1JNRwsgdDzAK6K/kd4k0/x6EQGiNxEUYFg1TZzNt0RIOdHURjB6i+vIGYvkRJA5+1492BKaUiIiDG3EIeAK4uGhDIoYNNvzmJQZf7EENuTgSvMKiubmZeDzOGWeccULzCk/8UlzGhdIStHL55re+zebN2zHzDGZd2oh3jodBMwpoLNfAlQJHpE2tIGOykICRjlDRONLBp0AbFkNhh+iWHoZ3H6Jz/yDlYioLFy9j685tlFZPYsZZb4fqySz7xG0gJUlhZQKPw9ge8WvupzpqsjyjPLVGCI3ULrYU2JYP4a+icObJtGxcTbC1g4LqAMrwEWqL0vz0TkonTUB4DQ6u3s6pZyzGe3opMRnCTfnw95lM8NZRtqiOPZvWIPrAsCzu+d1vmD5nFldf8a5c0DYOwDcS8WZu3kMPPsLDDzyC9plUL62hZGk5A54QQpkYSuJkalGGznp7AnDTnxegdRoYUkpkyOHAml20vdSN2WVRnd/A0tmX0rDkbRRUTWRyaBBfsBhlFRBPCRwjiBCpDLSyyEv/lHqEntWH/6WP4kJIITI0RQGmj3DHAXb8+be4yWHcVBSfYVLoy8ejBZ07Btj76F6Ktgv6ZRve2cWUyFp237eHYP8k6s8oRxaa1J0yja7HOji0OYETdQiWBPEbFv3dffzgzjs5bc5c6qbPOGoLwjgAX9VL1QgEB9o6uOu7d+GmkhTNLqf24gaGfUM4gEeL0epnlNaRKKFQwkUjMLTENwzr/riO5Aabk2rPofbKt1E262TMwgoSwsug1pil5SS1i6NMMD1IFFKA0n+fxkoBCGnQuvE5Bvc+RsWsMmSey5Tl9bjzSmnduIu9f9iKr7+MQGAyVTOm0LT3BawSSbB6Il1/68HZ0sPkG05C+f14iZAf9+OWNqAqJbVF5QwODdLWe4jbv/Ut7vr+D/B6veMa8I2oQEcpfvyjn3GgtQVRJph1YSPxsjgxI4HlepCkE8NHIjCbftGkUFrhURaW7WXbwy/DWpezz/k4NW9/D3hLcFAkESgl0kBTAlt6EYZMM1e0Okpm7/UFT0KIUQGBBmQqhfDGaHhvI8kKA6GSRGScrtVtlCfqWXLFB/HVz8SYVE73TxMkmtYQirdTU13O4KFekms9JNoUvopCwlYEPZTEGYJdqh3pgvDm8/SzL/Lww4/wnve8mxMt6fEmiIIl6158iScffRzXq6leVoNvlhdXJzCVxHKtTJlLHVPVaDQeYeJL+dn99E76Xghz6rLrmXL+e+n1FxPRad9Q4GJip/N4WiC1wlA2prJBq7TZfIPB09HMnlYudbOWIBOVDO5oJ+ZJ4hAnbzBBsjtJ3YylVC2/CFkzm6jII5SUeAurqSpvgJiL8Jr44gVUVi8hFvPhMzzU1EykcXY1xVOClM8pI79Q4nVS/OTHP6ajo+OE8wNPeAAmE3F+/IOfEB8K45/spebMGgatMFoLLEficTUCJ60BtUJLjaEVpnJxpYsrND6RT6IHtjywgQNPHmDB/MuY+Y5rCVv55NkCDy7p1LFEifRPVxiZd1yESFc7IB3BHk4/jw5AXi8AXcchUDMF74RZ9O89RMAFx+shMehgxwT+SZOJCR/gJd8b5NwLL+OkM68iWtlIT0cSb2sYbWmqlp5ONFoAzUlaW1uxa/OZcuUiJl4zj6Irp+IWxmje38yvfvnrrE05YQY0nLAmOBu1rXjmaV7csJGAZVJ9Vh1OuZ02p65D0pDYHtCORMdMpMdDSoNlu1gei2GvjS+m6f5bK7tfaMbXabDstOuZe/GNxK0itDZBgotCZJrD0/GLBpx0G6ZIg1JrjUBhZOrKIwOO16MJs0zmLCC9Hgv/hAn07V6Ndfc6hqUgdSBJvlNG+ZSpxEJ9HGppI9HbiRmOECwqYGbDfNqHIrjJMOVTF1NWPoOTL7sRZ/8adu16gZ0PbcJ4zsZT7aHmnIUUzank0JpeHnngEa6++grqpzSAq8EQx525dUL7gPF4nHt++T/E3Rj5RfmUNZQTEcOkpECbCul46dzaS+9LLajeCN7qYlIxRSocp7imhGlvn8twTzttD2xnesUSTr7mXfhOXkYCH0p70owV7SKFRh8PJqeGpCWZe9Y7aEnaRJr34TFSWEE/lbNn0Lp2Pfu33Ysd7cIScZQJbtRl2pylnPrhTxOzijFcD4mYl/pl56EWLcR8eQl2tAkjlqDnpReJWO0UnVbHQNMQXa2d/P7X9/Fvt335hOGtnrAAFEKwatUqtmzegmkZJIwkSa+NI1xcy4cTc+n45Vr6X45RUTyTovwShpsHKTdL8Xi87F+9mcFoE6IsgXTLmf/uj5I3eSEhx48jHEyZCS6EzmaIx/onI/otciZUvzFtfuS5Zf1TkYLi+ukUXPsv7Hr+SXp2bMDu66d5/zN4TMXE2eV45tfgq/Li9ftoeXY7Tc+uJP/ls6hbcjFJCVIIUiiUN8icxReivJAwDbTnDzRt+jmTznIpmlVAf98AT/31aW780AeYOHHCCYHAExaASikefPBBdEpheDy4ElypAUlBMsD+hzaRWhXnvPM+woTzL8XxBTCScSxRhPBB/z13MtixHh8x/IFKKJ/IIC4e7aKFwlAKIxM9u0Kmre5xiPC1MFDC5aW/PUzrU/dTXSbJr/eTN6UK/6xyzIk+hExikyTsj1Pim0Ln7tXsfOBH9O/axOSFp+GfPoe+rZvZuWoFluWldtYiKubOJ392Lc46D3ZXkqKTSujdPkhrZysPPfQAH//EJ8d9wGMmnQXs2LadNS+8gOHxoLTEoyVKShCQ6IzQ8nIfcxaex5R3XkefWYDpaFK+ImL4sEzwBqpwWzWRsKI0WEqxyKNPp1WO1CLD3wMtJGhzRO1CHnFAmYqKSIcbWqjDmfEjf76KhtSZ7LSp0zQuqRWOx8NQ2wE61/yVyTNh+vVLGKrSSCOBo5LEiaClgVAu3rhClxYw87L5dD26g13bf0fz5mfwTZmH6unBirWQCKbYuONJ/I/VEaisxIgK2rZHmHhpOcGZeaR6Ejz+6GO874ZrKMgrGQfgkQBUpH3jFY//hVgojFGUj2tr/MKDNgTaEISauwgM+ph5+TlEzHyUkgidACykjhJwAhgFBfQNhrAjMSbNqcb1BkgJC792UdJEaQclnHS2UGsMrSFTpcjUy9I1FJHl/clMdWVE7ffIn8dKhmdMblbTGtpFaI0jwNQOu1c+jYx3UXnmDCJlcRw3Caj0twqT9KFZKFPj6iiFC4som7qcWFuM3i2DDK57GTsUYeIFU5h81mSGd/bRuTNE/MAOpJsksSuIml9OUWMePetcmpoPsu7ldZx75gXjABxldoVGCUE4EuH551eisSiqrGWgbwCVp7FMCzdp0rerl7LCiVRMmkHYJR1EiDT3zzAkQ72tTKivwKmdhplMUb14KSkpKEi5GCKVAZbGJj05QQEIAxONFAqtBUprXMtBZyJfCzetsZSJQr6hAr+p0mW8NKvFANMg2rSNzpdXUD2rnOJZlXSY/RjSxHTNUTQvoUHo9AOQlElEnkVglo/Jc+qYfMYEug90UjSrjOGqKLq6gNqzSjG6Ktj08xfwHPTR8VwL9RdPomdiH8MH4zzxyN/GAXgUVYEBbNu6mabmZvAGKaudzqHudVjlXgzTxQ67hNriNFTNwM6fhDZMLDuW1hSmy2BnC6vv/iHC7aXe66N8+nxKp80mgoWhTRxDYmCjBWkgAZZwsYQXNx4mFR8GDf78IoLaIqUMXG3iap3WXIY+nIZ5nYFImp0jcZCYAgw7xpZnHkQ43UycdxJxaWCYQbRrp7l/WiNkmkIm0JnrY6CEIuFJYuCiFYi6AEWTa8FJIZwUtpEiadqYk0z05CI8/UXE28JEmmNUzCphf0cb617YQG93D+VVFceVqHBCATDrfT37zFNEEnHyamsIlE9AJVN4y/IRVoJUMgUxjTnJQvpNOjY9z66/PUJxeR2nXHo5W1c/TjC8h/KJAQ5197Ft9W5OEhbzLvkAYU8+hg0YJloLBAqvcFGxMJue+wsHt2/AjfUjhCSvpIrZi85m2snLiJp52FriSIlGvUHvIkPpAQzp4HVCbP/bI3RvfZag5fDys5tRWzUT501i0inV2PnRNOk0x61O04KkNhGYaOGkZxBKA7/tYCqHpClIGgY+R4CChM9gwvwGujYepKykiu6NfVScnkfQ6+NQTwdbdmzl3Kpzj2t15ISLguOJKJs2bkILTUFVDQRLkUiiA4OkkgG8hUGKSvzEOvaz5aF72LzmL+THO+loepl5p5xEeaGfNp+mZbiLovqJzAx62f/c73DicWZefh2+vAk4rsTSLsowiPcf4qnf/gCzbw8VMkm4txMhJeH2zTy3ax1d+7dy6hU3kvIXYwuFoY0ckF4/CEU65RMf5On7fsTAjjVMrSqktyeG6rQR7TYHtm6nb2cHs66ZjVEs0v4fAjJkCiADTAMTgVAQtxSudLFc8ChJytCYWiBcRUVdAd3lUZJRhS+VR6R1mGBegPDAEBs2bODct507XoobeYu6untoaevEMDVFlXUYFdMpbVzA8IZuulb24QvmUXZBHT2DB2l68BeUl8YoO2kCnnwvnmAhi865kgs/+0MWnXojg839lDVUU35yCQc2Psjan/03oY5mMNJOfUrYvHD//zDR6eDx3/+Shx98mPmLlpF0TU5ZuJgFdcUcWPUAe1Y/iVcIhDZec8/tSEZ0uoqSTvkIodn45ENENv2NH3zj33n40Ud5/wc/hHIV5eUTWdR4CnqTov3+Vjy2CQqkm26sMjBAOyBsEOkGK8fUGFpiuiZoE42BoUwcSyFRmAWC4iUTGRjqxh/04x6wcX0aJGzZuBnbtscBODKEbG5qIjTYj+HPp7iyGtvwUrf0PCx/PT2P7GNoVStFcyupem8FVdfMoOHiibT27qambj6essmEjGLc4ik0nn0FxZXz2PXwJqJRB391gMGDL7DpF9/AHuzGNvPoadpC/8uPM6O+mqlTpjJhwkRqamsJ5uVz9//8D7d941sEhM2+VY8gBtsQwkS9Rv9PKZV75cyNIYkcamXP+ueoKs7nzNOXUlxYwMKFC0nZNv/ygX/ht7/7HdXlk+jc1MXw3jAWHlypXilxkDbrQqYHMkmJISVSGihDEjNcqhc1YE10SUaipCjB6Uzi8Zo0HWimp6f3uN7xE46S/9gjj/DiqmcJVE1h0qnnYct8fMEiPMVFDO0+SGjTPoxBh9qlUxCnBji0sY3hF8PMW3w2xVMXESVAXPiRlg/L8jDc10c0kiLZF0KkbPzlRYSjCZqfuQ832sXAgYPE+lrBMFm//mXuv/8+EvE4tuOy6sUNtO/ZSio6RFnDPAITp6M0Y0hZI32oV6I7GYakdcsLdK5/Ch3tp7Ojg+FIhJ/9/G56enpIJBI0NzezZcNm3ISLWeqlZGYJCTOJyKRwRvlrR22GyuYtNVqQDp6CFj6ge2sP+QWTMMNxXOkQiydYvmwZ9fX14z4gmXRI0549WLgEyibiegtAubhI6paeR219A3se/QPdz7xMOLKb6g9Porimmv7yOKtWPsK0mMncC65BecqIa0HdwmXUzZ+PCvfjdnYSSUTwTqujq7mdwOAhookwSngIR/r5xje+kWbYWBZCCH7605/iSh/F0kArSSwSoUI76Z7fN1g10cIgGR7Cr+MgTR589HH+/OgjIEy8Xi8bN25k3fp1BD1+pNCo4bTmU1Jhuha8hgAoneJ20/lGlb6qDhGKTymna8MQqYOHCJYWEum3sZNRmpr2ceaZZ46bYIBoPEl7a3s6Ci0qx5UeHAtc4SBsE8+0+cz9xM1UnXMpQxuH6bu/hfw6P40fnkfBBMHelY+R7N6HnyioJHFtEjLLiZXMgLnnkL/4UlTJXCYsvJiT3v91zKJJBN0hXOnF8njwekxkpp/EY5l4TYmDScrw48srSPMEM7m8kckYfQx34jAoZEYrSfIK8lGug5IS4fFiWh4sy0JrjWWa+D2+dHbScPEHfBlGOEgtXgfQQWiJoQSG1gilSBUIJp9ZRyrVTVQnkKYHoQUHDhwY9wGzEhocpG+gF9cKEMwvQmiNcA3AxBEKbYMyyzn5sg8wZ/m76VqVpP2BHRRUSTyneTANF4VEageJS9IQaDR5CdC2S0zH8TgxTCdBSAgmTm4k5fVCpqdDZaoVrpBoKUEokgKCRQVUV08gqbygBVpLFEamTzczgiNDsxoJQKnJ5P0stAbHTVIxpRGjeCKOTmEIF4SBwkELlyzl1XIshCEonFaIIzWGMkBkU+aHXyLTmzwmjaJl+lykxBUmaC/aFnhngH9+HtHeflwnhjAFHR2dx5UlfWIBcHiYaCwKhgdfMB91xHUxhEQoTTIQYPpVn6J+0cU0r4qQ2jCMvS9Egc/Em1dIAi9CQ0Db+L0KJ+hg+1ws6cGyPRjaxXFcJkw7ifp5p2E7KWy8OMKPi4WLB4UHjxsj6cLM0y/CW1afGXchsQywtIPKJIjFUW6gSOdPMLXCL2w0EseRFJROYPJJi3GVF0/KwnDTg3vRMr2NVAwZEYrmVlA2o4okToaI8b+4yQJMbBKGS+GcatwgeF2J1DA4OHhcI+ETwgfMZuIHhwZIJJJgeDF8eYBMd5FpNaKvAhxlELMM5p99Ja1b19G1dQAhBdrjQ/rzEZYPjxMnNdTNvp0b6G89iNQGs885HyZPx5PUWJjERCknX/4xIrEkvTvX4hUOVqY+7CpBSiumLXk7M8++kmGRhxTgxMOEDx1gQnUNcU9xxhirsdGxyIxJi/cz3H2QvJrZCCMfFxOzqBKNlxRh0BBIeBAYOMIlJZIUTC+k8fK5xIMJHOmkBxxlOuqO9Pdem/ZSmGjCSmHUBPA0+LE3xTFNi4GBAcLhMKWlpeNBSCQcwbFtRLAA6fHhZkgBCHAcJ7ed1xUIlcCaUEfd/FM4sPuvTJwRpD8eYfvqxzADRRSZkpf+9jRO2w4CHhuZtNm060Xq334ZBZXVWBgEK6chSxs4+/230PTsH9m3eQ1OZAApJMGiMmYtvZDJi88j7C3FwcJvSXa99AJrH72H6z78acypy7BdMDNlspFRsNZgWiYHd6zn+ft+zCUfu43g5FPRQpJKpvD4NPVL6jnQ3UaqOwWugZFvUd/YQMM5UwlPSBIjhhDp/hShJW80+kkD1cB0LGKeOBUnV9DRfBArqkjEEySTyX9uDZj1YWKxKI5WmIaJsHw5UyYEuK6bu5gSB639RLw2sxdfTNumF4jvjxFwHHY/fjdoG+kqTG+AKWdVUbq4muGuLpoe28aG3x8g6Q3gVwmK60/l9Gu/gK9qIlMv/SSTz7kaO9yLlIJAYSkiUElYCWydLYgJ8iyFL9JBrLuZwmlnInQq95AIVLptM0Px0gKGDu0nL9VPHjGkdtESPJaFnYriqZ7A4quWkxiIIl0vvgI/TqlLrxlCuUnSPc7pakeai3MEGycb6ujshIbsIKTR1WoNuNrAtBXKThCsCeCfWkByawjbsUkkEuNpGEgvp2DjEkSTsjwIJZDSTpe+XAetXAwpUYZAaRszqSmun8oZl32AVY/+Bhk5RJkHJiyZQZcTor6hGv+yfMLeOIWNE1gwqYDY9mFwPAxGI7StfZ4tf/Bw8r98FlE4CSMwATOvEiVdbMfFdhRKiFzeL4mgZMp8CgIB9m9YzfxTrsX0GBiOg6scBCmEsHDwYhh5JPt30bJtFZVl9QTKpxDXghQwafHp9K1fSdMTu5g1JYDb6AMbrGSCuE4RF0m8gNAGZGYLKg2mlun8XgZgQpMe16bT/SwuNkgHoYyj+IEutkhhKB+uIQmeFCS2axjbdg4D8Djw9E+oICSt5dI9uOTybem1PtJVBTdXnHekxjYEg6ZB5elncd6nvkjlwuUMKU2ySDPj+pNwzwoSM5No5RIXCdwZ+eRdPpXSd01k8nXTmXhuGc1NT/D8T2+nc/caXNWPYdhobRATXlTWBchqEuUSLKtl+umXsX/HFrbc920SoTDSDGAZfrRZhGEEycMm1vsiL/3uu4iWAWYvv4hUYTEJM4npSsrKGznlvR8l6RSw74FdBLvykdokZqbw2Ab58XyEm4/W/jQTR5nYQhD3ujiWSvP4dRyI4UgbR6ZwpZseO3OMOrXSClenqWYAvqAXaUhc1zmuw4tOKA1ommZ6cI+UmRk+IuNbiQwANQbpWctSaRyZTnGECGDWzWfelRX0HGyl60AXxVQR9YYxtA+vC16tsWWMiBknKlM4wmD6ZfMIWnnsfXYth350kLLaaUyfcxpTFpxForwaV7mZVEoOgVgqReP5NzAwOETzqj/T27SJ6pPfRnHNDPDkk4oO0du8hZZdz2INhTn5wisoOud8HNfAJzRSG7hJP8G5S5h79lVsf/iXHHxgB3XXTaW/KEnS8RBICTwqhWuk0CgsYSITBsMtMeKpFIWVRZiFHpIiiVYaJV0E6ZmFhpKZJv2jP+A5cqxSmVk1cpwNk42CfT4fhkyvSqmUxsgU8kGjtcJ1XSw0aIHpGkiVnc1nkNQgPQV4rCJUpIv8lEXKa5Ay3LR/piQ+F3xASppIKQh7HCa9Yw6lM2vpeWoXLe2rWfvIWtpffomlH/wMoqx2TCpIaIeUr4DF7/ssNbWVHFz5IM0rfkFKS6Q20stRezQ11Y3Mv/Ij+E86hWEzj8KkAAlKShQOSUcw48zL6Ws6yMF1K6DApv6yRlK+tOZPCIUSCtMVdLcMcvC5ZpLbk6Rcl6KaYmacNRP/JD/eMpOEkcIxHOAYXEUBruPiui5SWOlxJUqhtMIwjeM6suOE0oB5eXkY0sBxXZRrY2iV48FpNHYqhc/vxxEC20wnnAXpBLBfKva+/DyDvU3ULA6Q8qR7MAKOiy3SaRuZKU9p6eLRClckGPY6BGZ6qJ0yn5KBOKG/HeTAX1ez4+mJzLv68yTS6xrlErwR4cWromBC1ds/QMWSKwh17ibR14WRjOMJ5uOpmERR1RRSwXwSrqI0KklYYEsDU2mEEcPjKOxAOQve9yHi94TpfnIDTtsWKIdE0iXpGBimQsYFw01hLKeYOXOW4HMlW7euZdvOjZjVivnXL8HfEMQ1YugMjX8s/gSO46JclWsFVq5CuQqv34vf7x+PggECwSBeaZFQLkY8hFHgoLWRNstCYDsOufYM7WCQwpE+tDSIte5k9xN/xFsSZ+oZU0hZCdB+XBIIdIYOT66JyEFmtKtLTMRxPaCrTSZeNoWO9m46dmymcSCGUVSQI6FKbWGhAA9aaXRKIAPllEwrw5ienhOdmfpHSrtoW2FpiWtkAoasNk/PaUW5Ck9xHWdc+1k2PHQv3XteQu0Kg+HBtEwMKTB9+cyesYQpSy6iaPoCDJWgaP/59O18gZ3P/onh1T0EpjbgSAeP60n3nWCPuq5CCHQSPLYPbWhcw4GkQrgav893eGlY8U+uAYuLivF5/cRTDk4sjCeHtrTYdgpXuSBkLjJVGrzCZdPalTixQ5xy+XyMyQFsGU2P6sj4QyNH9eoci0TkynAepUkKRSpoUtU4kc69Xaj+3QTL5hHK9IFYwsZwZZpvogUSF9z0+Dcn9zCpzE+du59uRutInYWyyAWcSWVhVUzjjBs/T6S7hUQsgWF58PlMvIbA9AYQeeXEzEIGMdHSR96sJRSXl7Jz3Qu4UY10070wUot06e4INaiVxk46CNLNWEIJEuEkWkNJSQmBQGDcBAMUFBUSDAYZjPXgJKMZZSUzcW/aiU6lbHx+K836EAaGIVDhQ3TuWkfxRIvgvDz6vBGkAKlteI1FfAOwNKQsF9+kILY8wPaNj1PnhcLqkxH48DgJHKlRUo+t/r82XT8mmSxQpBQoowA5aT5+6clo5hS21iSFQRILpQUeHGwkLgbd7Z2EExEayqrQCgwnXVpDqBGM7UzA4bg4SQczk8w2lMQJuaChoKDguPqAJ1QaprCwkJLiYpQdJzo8MGIUc6bQr8G27cygcY3CQAjBUMd+4v0HKJ5SSLw4ijJcTCfb6/vq1QONxpEarwvaTeGdnI+epDnw/OM8852vsf3BezGcPiJ5CsdDhniQ3bfKRewjo0mBOOq86JFmUQiB0A6GToFIBwXKtdHKRmsXB42jFULbeEhiqQQebLxunP0vr8RvDFHUWETSiKeXjVBkWjglQshMykWQSCQRbprAINEIG+zhFEILJk2adFxX3DyhABjw+5hYPQFch8hgf5r6NHLVHwGJRCJ984VGC4EhJYda9mHpGOWzJpG04nhtjc/25HKrrwpAQbqPwlWYrososVjwnmXMunwWZbUR9j7/U1b+5P9x8Mn7Cbe3ILWDZUpMQx7uJX7Dd8BAGRZKWiAlpnAwcTJhl8isQZLtI/bgSg/JVJK+rlbKK/z46r3EjAgIlWndlCgFKgNG5UI8lkTow/Osla1JhpJIIak7zgvbnFAmWAiYNn0G+sm/kOxpxUgM4/iCWCJT6ncVSiVJxWN4Av50fOwqEqEIXinxFfmJM4zXtYiZBqYycYWbiaRH3HMtjxhmIJCuJGkKNCZCKTzTvQRnFlGwuBzx+A6Gtm5keMc2DgZ+g1U/ldK6mcyYt5jA1AXEtMbvpPdkmw5ob3rqAu6oYCB7HCN7RXIkA51d6EZmUlPisBEVZJLiabD7vH6qJtQS2rmZSEcUsyiAoSMkPOBxvDjSxZUKKUzciEYkLITUSBsShsBOKMwBF0uYNExpOK73/ISbDzh33nxM0yQ22EdyuB9zTFJVE4/H07NPNRhSUlEzmYRj0LF1Pz7HS8pQpEw7M9Hg2N7Y4dxemvCZzikKhAabJEOij9QEm1nvnceSzy9myr/U4D3FZjixmX1/+w3P/PjrtL7wOH6dwiHDvRMi5+kd+TrWcQh9ePaqzs22HrudzKy4rgwP85efT8QpZOfTuwhEAwhtoYRKR+zZa+ZCLBLPThhJWwxtEOsP40QcCvILmDZt2jgAR0rDlGkUFxXgxMMM93bgke6YdE0yaWOnHAytsF2X6sb5+Cum0PbiQbzdFq5hAgngf1NiEhiuxCFFOBglMjlJ8LxiZrx/Nss/u5QlH56HW9DC1j//iMjOjUhDk5IG0jWQI6Lvv6N9yIz10CRcKJwyn+q5ZzG8M4R7MAHCh9ASbaT1rImJHXVwkk7aR82s5uS1JYmOYdwE1NdPprq6ehyAI6VyQhU11dWoVIzBrhZMlRqToHIcl3g0hqGddMWksIppS99OvM+ia2UXAdeHx3WwM2zlNyoe5cHjetPlMy1Iape4FWe4LEpqeR51181CWe2se/AX2ENtCKmQbtrUqlcB4OufWJ+mZBnaRStF0gowac5CrISB3RnGMU0kEmS6lCltSTKURKgMjUuAEhIZ10RaB5G2wbz58/F4POOM6MM3BfICfubNm4fUDv1drahEdMzKREII4rE4djLN4ohrkxmnnU1V9Wyanz/AwL5e/Olpz/+rAME2k9hmEi1cDA2ma+AIC+GCTkaomF1B5ZlTGOrdSbK3GUu6GCpDUf17J3UzEa3U6TnWGvCXlmAYAjcewzGyJCwJQhOLJFApnQZlJhrTUpIMxXEHE3itAAsXLjru9/yEAqDQaXN75tnnYviKcAa7cHuaAYkjDGRmgLhG4LpJItE4UtlI18HMr+LkS25AJopoeewAKuzFwM5MvjKQ2gSMDMlVvaaXznldOr3Mg3DwKEHKSmFKF1eZ9Ifi+AIWwaIyHG2ATGbmRptHSc2QIVOQWTqHV5hLmF2PLhu+pL9faYXhGoCB7aZzoSmhyEs6KAFKmOiEJh6PgkwHb6ayQEuEmSLUFUOE/JRV5DP/pDnjABwbGShOXriQ2voG7FiY7qZteHQqTcs/XL9ACk0sHicRjyNRxFxNcP5C5i67GGdjnN5nWvEqP0poHOGiRLrxR74Ov1BomaE3iUziW2eKbRrl8RLe08PQyy1MaJiPt6yOlCtxhc7lKcfu73A0IjSvi+AsM2W8hJEe1OmzY7RtXo/CxV+Zbl5SQiEdRXwohnbU6EynVBi2pvdAHyQMTjvlNKonTTruKyidcJMR0JrikhKWnrYYrR0OtezFiB7CwsmmUdM6SafBEI1GUUohlSDhepnyznczaebZHHiijc6/tuC3A2kfTrqAi6nfuFeoAcfQBBwPiQGX/Y9tpSRayPSll5Ay8hFCpCNhFAL3736jBGAbEsOj6d62hgPrnmTSnApKplURNVxQkBqK4CRcDG1mcn8aV7gIQ5FqT5JojxKwvLzzwkuRx5mKdQJqQJHz997+9rfh9xrE+jsIt+/CkjqzSKDItSOCIJlKEQ6H8bgaX0IRK6pk3gc+S0ntMg4+fJDWRw9SEC7Ecn3Z+sT/SkFr4WJi0f5sM+G9LnPPuprSmUtxXfCoFEqmteAb6d/I5gVHBgW530X6dnkwcYcHWfPk7/H4DzH57Q2kAgmEAjeiSA47GK6JVAaodK5R4eJxDSI7hvEOm9TU1XDyKQtOiFt+wkXB2WzYqaeewvz5c9DJEPu3rQcniRZGpul69M2NxeKE7SjaTBGISYziOk57/yepmXw63U90svWhrZgxH0J4c4tKv9GjM7VL1HawtwzQMPFUJr/jfYRlEEul8Op4Lpf3916IQ2VWOsxTJgc3bmagax9zzmiAGSYpGcGTcEgNOmjXi1RGhpuYSWYbgnD3MIO7hvEmLM46dzklFcXjADxqqiFz0Xy+AJdccjkCGGxrItK2D69Or+ihhc5pQqkV2kkRGhwgmXIRLqikjSypYdGN/0bVyRfQt7KT5vt2YMaTaO0ida6dPBNgimP4gIfXRJdkmdgGbhKSwzaBsokk/fnpkEVI3PTAtPQq7Vogtc68yBAFyAQKh19a8JqmrapsPRxF997NFPpiFC6oIi5TuK4kMpBEJzOTX4UkJQSOFAhD4kkYHHppEDviUFxSwlWXXnXC3PETcKWkw2sPnX/+hdTX1aPiIQ5sXoPHjmTWvzRGbJ3h4TkOg/2DJJSNFA6Oq1D5lSy9+jPMXPAeOl7o5cAT7VhOfg7qr0aAyzb+ZF+gQQrsaIJEMoX0WhhuenRveqKCkQGgOBxk6NGrKb2W6sgriSsFHksg3BQx5aAdGB6Mkkqmjw3STGrXSGFIgd0WY99je4ntCSOSDsuXLaVxZiNqHICv7g9VVFTwvmuvwVQp+g7sYLhtN5Zw0Uc7bA1uymZooB/XdTAE4NokPWXMedfHqJ80l8FnQjjdDlJ4SJfB5SjD/5qOS4IbSyJtiSeYn1lv5B+UINAC1zAoqpyAk4TkQILoYBQn4TKyACi1iyU09qEwTY/vwdgmCSYsinxBrnvfNZl+Lz0OwFeOR9I649Ir3kXD5MlY8T5aN6/E50SQ2kWpI0ekaQwJTirJ0EA/ynEw0NgqQaokn6mnnoMKwdCmNkztSU/Wz9C5xGusWmitEUqiB21IWgRKqlDCGpXLy6U1Xkd0OXauzNHSMGmtbSPw5Rdh4iE5mMCNp2fHZAeYK5HuX/ZGPLSu3I+v10O+nYdOCs4++xxOPnUhaVrWuAZ8TTe9rLyCGz/0EXzCZuDAdtp2bcQj3GNoibRuTCWTDA0OoFKKABrlpiie/TaM0nL6N/SSirjZNPDrehikIUkMxWnb3kqBp5QJk2cS10aOwfKP0IOulChpILUHwzEzSXaZ85210Ehp0bqug+QeB4/rJW7ECRQVceOHP5geYfKax2yOa0AArrziShYtWIRIxjmwYSViqBNTSgwUBm6akycyTdtCIwXYyQSDA/3YiSSGI7HKq6mau5ThjiTu/gTSAFsmMXR2isHItS/TJS3DlRhao0xBNOTS9pcW9v73OoZejDF7+RXkV01BuKO5LyIzx0WLdHCjpTgcdGRZKUe8Rn/vWN9UCJFe1kE6uLEI/Z1NCKnBb2BLjWtYoK30ZC0E/bt66Xn5ECV2CUIJIjrMu99zBQsXLMhMsXntD98/LQBz0Z+GQMDPxz/9afw+i0TPAZpefIqAGwMtsIU3PaVKu7kOumwixHFSDAwMEQtFUVIxZc5iHO1hYFcPUgm0VJlkrTwqABxDoUxJZHcv2+5aRfufuyiw53HepZ9j6gXvYsjw4GTaJ4+aTBJvPOjIHUmGK6gUDIcGCPf0EO3vwPCC6TfwuAohUjiWgzAtIl0JOle3UGaV4/EGsG2baXV1fOBfbkhzDrU8YcD3pgCgFmBrOP2MM7nqqssRToiuPS/Ru2ctltAk8aRXHtX2URPbrlKEhgfp7e2jpLKaQGEVvc296Ig7YorA0WNCZTq4WtL+VDNVB8o44+yPcvYn/oPqMy4n7CkiJSVaqr/7/Tysg9OrONnJJAP9fURDYaRjE4+EMPwSvBK0QhlxLCOFPpSkZcV+SkPFFHhLCDlxTK/BLZ+7iYkTJp5wq6W/KQAoyWQXhOTTn/4sJ82di4wPsXvVYyQPNRHQsQz/znjFmxmNxQklXYKlk7B7ErhDLkKbOEqlF3BmLPHV0BK3O8VQc5z6eefScMl1JPNqSTlBLO3Frw28rkgPEDoilzeyqnG0IONo72f3IYVAInAdh+HBIfr7+kkmEunIPpkkGRnGEzRJBjVRS2PhR3RoDjy2m8KuADVF9Qz3D2A7Ua569+VccNE70tdSyvEV09+INsi2GZaWVfKlL91GUX4+9mA725+5H1+4DY9wSGG9wj7SO7CFSWHpRAhDpC+C1EamM/Moo76FACNAdE8/zpCgYFojSUyEcpHawcg0xSthZOjyfz+xUzahoSH6enqJRqJZRzEdBUdjJKMRAkU+8CssW+PsS7L38YOo3iAN0xfQFRogGQ9xytyZ3PT5z6OkcUIrmDeNuEqzZMmp/OsXbsUUklj7LvY892c8qRBCpMdEgovQLiIzwlaLNH3B1C6uFpgVdSh8DO8PkexL4aRcLMdKJ4yFzCWSFYqk0vTv7aXMV0N5wyy0k+7fUFLgSnBEuudXHxG8HPNnNqGtD38iM/8KoRV2Is7QQD/9vYcIh4bT0yFQCK2wFKANbB3DdFycvhD9K/bTfV8TzQ/uxjucR+P809nb08/QcA+V5aV8/fb/oLSk/IS+p+abAnkZBWPIdHH9mmvey76mZn5zz0/o2rMRN6+CGWddQdLwol2ViUTlKN/M0C5Kg6e0Cqw8Um1J5AAMxcMEPB6sgBfpNZCmgatSSFOj24fp39vPSTOvxF9WQ79Or8GRNtA608vhHmHW9Cv81JmJr4ejfMdOkUwkiMVi2HYqszKSRo4gNKSBmp5/7SkIECyeRE/PbtyIS6Gnivrp85hYP4Wd6/5Gsms3eabFrbfcypy5J6XP/QQzu28+AB6RGxRS8IUv/CuHOvbzxFNP0755JabpYeryS0lh4GKgZbZWPCKoUJqCwiKChRMIte6jZsjF8JokYjapiEZ6Elh+A6/PAkfR9uB2zFgBU087m4Tpw9AmUmeGHY3oqxMjgTZqDeGx3BvtOjiOQzKVIpFI4NgplONmNs/4kumTHR0QoXCVi/DksfAd15IK9UGeQZ6vEG34ePGZxwi37iPfHuYzN32Nyy+//Lhz/d5yAMxeTKU1wYCfr3/jTiKxz7By9Uu0b3gaiWT2aecSNoIkdNrhliMhoDWG30dhwyxC65uItUWwKvJwVQJDWLgpG51SRFti7HlpN8ktDnMWXABlNQxG4liWwjTSD8AocIn0ODmd+Q6dqdIolZ7opZQiZdu4to1ybGzHQavsCA+ZngI2Mu8kjuaTpskTrrIwi6vxF0/CMUxC8TC7n7ib1L4Xsdwk13zsX/nghz78pgAfgNAnYmz+apoQhVIOhvTQ03OIz37607z0wgtIfyEVc89kypmXkvIX4ujM+moZHaK1AkOR6G1hx69/QHBmjMpLp4JOpmeqSIlzyGbfk3uwOrxMPfl8ak57O1FPGa42kcJJN/xIM93Lm62QCDHK3CtX5SJcpVUakEIgM6Y1fckPr3Ytxoz20GO76nR6kUItICk0HmngDvaydcVviB3cjN8e5P0f+ig33fIlvFJmJvqLEx6Eb04A6kzPhjCQCHoOHeILn/sML6xcSSpQSv60k5nztkuQhVU4rifda6JdXCFJSQOvTNDy+5/TPbSGye9txCwXpIwEKC8DjzQR2WNw+unvoWD+MgYNHy4epNLozAT9V4vd0sZ/rAYSuR6PkdPtxZjZMkqI9GhgrXMtBEK5GFpjCwthQbijmV1P3Y/s3IyrBR/+yEe45V8/j2Fk/F94U2hAyZtQ0rNPTGRmgZiKykq+/YO7OPfiSzHsMENN69jw6K+Jd+xNDy/SIj1HRik8rosUfqrmnoIb8RLdegivsghoD4MdQ0R3hZg2+TS8Jy+nT/hRysj4fSrN88syskmX/I72EplyoMi1mY/gHo4pv5GZ63f4hXYxlJ0ZrpR5eKQkaVkYpkv/jrXsfPjn6M5teD0ebv7cZ7j15puQUqK1fFNovlxweKItVvhGJRAIcO5555JMxti1ZSuJwUF6DjRjWgZFpZU4ZgCNwKPd9JIFFQUkujsJ7dtN4aQiPPl+4gMJwrsHMeUk8mYtxpFmOkVyLMLq/9FNNkjnGdP1bSM9Icz04MTDtKx5jNaVf8Yz2MHE0mK+cvvtXH/DDaO7794k4HtLADD7tCutMS2TM844g4mVFWx7eT2Jvk6GW7YSG+6npKwKI1iCqz1IbRP3eygNFtK3ey+Dg70UTC0jWOjFDoWJNvVTXT8bWVCSyQ/+/QH4Sp6PRmILC1t6EdLAKzXRtp3sfvJeBne8gBUfZM68hfznf/83Z5995phr8WaSt4wGFEKjtQNCMGv2PBYvPY09TXvpbmsh3tfOof07EK5NWXklhmViuwbewlKkVHRt24mbSFJWXYosNBne3kFefhV59Y24Wh6z1Pt/dbO1BmEYeASIcDf7X3yUpucfQHc34zPhve97H//xn3cwtaH+TX/f3jIAPBw9GrgIJlRWcu4FF2H48mnauZ3EYCeDbfsYaG/C8lgUFZRhe4MUllVghhL0b9xMIhKlsKqCvpZ+IlGb/NJq/IECXGEBEkOrw+OqXhWAh3287PAhwYglZHS6xdTQLqbONMHL9CBzr6kQiUE6t73AruceZHD3SxixQWbOaOTfb/8aH/7QBwn6vWidQgjzza043oxR8OuVTZs28f3vf59VK1fiOA6GNw//5JOomn8GE+pm4JeCvev+TNPG5yn1pEticVvjyDzKG5fSePa7cKx8pHbSHL+RANSZxaHHaEcjN4INlR5mKbVOa2oErs50s8g0jcwQJh6hccODdB/YwcFtq4l37sVKDFFSVMzlV17FRz/8Yaqqqt5S9+YtD0ClFFJKbNvmscce4yc//hEHdu/ElgZ2oARv5Qwmzz2diQ0NxPpbaVr3LKmudqxkCh00yWuYz/QzryRmFaG0xJCHS2SHe3bFGEpWuhiSqUiLbD1Y5WrUQqfzdMo0sJWD09fF0J5tdG9/meRAByQGKfQLzjhjKR/5+CeZv3Bx7nzejL7eP7UGHCmDg0M8+MhjPPD7X9LSvJuYDa5ZjDevlqoZDZRNqcH0+fFKL2awAh0oJaJ9KGGm0yO4kAHP4f6Po5FNNUKKdGEDQEi0THfNWUKh7RiJSIhQ+356dm9mqHs/brgbaYcpyS9iyaLTue6Ga1i6fBmGaeLwJitbjQPw6JFnVnMMDg+zeuUzPPzAA7y8/mX6QlGksjD9hajyMsyaaqrKplJcWoOnqBLDF0wDSpggTbRWOcZylvmc1nrp33Sm2cnQNoZ2wLVxo2Eifd30dbYw1N3CcG8XargPTyqCx3CZUFXF2W8/j8sufxcL5i9AytFMajkOwDc3+BAClEJoBy0thBAkXc2urVtZ+fRfWfH88+xq2kcyEsNUGteyIFCImV+Gp6ACf0EpZkEp/vwivD4/htePYXkxTSOza5WeSO86uKk4iWgIOx4mNjxALDyI3deFG+7DTcWwVAoLh+Lyck46ZRHnnnk2y08/k0m1NVnnITOtdeREI2McgG9licVibNmyhRdeeIEtWzbT3NxMX18fiUQiN/UeNMKwcKQHZfrB8GDINFBcdXhhbUslwE2hXBeVqQubAgrzA0yYMJHGWY2ceupiTluyhLr6+uM6qX4cgCeKhhyRWnFdl97eXg4ePMj27dvZt28fnR0d9Pd0EQmHiCeSJJIpXKVQGeBJKTENA9OyML1+8gqKKCwopLKykpraGubMamTmjOlMmDCBgoKCMRT+t0pgMQ7A/yNxXZdwLEo4HCEejZKIRdOcvsySp4Zh4PP68Pv9eP0B8vMLCAYC+P2+V/VJ/1llHICvV1NyIjU1vvnlHx7ZH9kF9r8xk6/2/qtpnDeigYR2cjA8zKjK1jhGUKzE2AbzI4/zf3MtjrbPo12HV3vvn25CapaomT3peDxOd3c3GzduZMWKFTz++OP09vam48ARTn327+zq3h0dHaxfv55YLDbq/dcD+KNd+PRaxa8wO0qYICwQJkKaaaKVzoBRGCCMEU1KoyWbRHZdd9S8Gdd1+frXv871119PV1fXa+7fzV7HkfsCuOeee7j++uvZu3dvOtk94nxGXv8jP/9PYYKzJ71ixQp+/OMfc/DgQdrb2xkeHiaVSgGwaNEiHn74YSZOnJirZGRvoJSS733ve9x555309/dzwQUX8Otf/5r8/PwxkaTWGsdxWLlyJT6fj3A4zJNPPsnevXvxeDzU1tZyxhlncMkll+QW7MseX09PD0NDQ/T09NDb28vAwABDQ0MkEgls28br9TJt2jQuuOACAoEAUkq6uroIBAIUFhYe8/yff/55vva1r3Hrrbfytre9DYBdu3axcOFC4vE4v/71r3nf+973mq/nunXruO2221iwYAG33XYbSinmzJlDU1MTy5Yt44knniA/P3/M9X/iiSf45je/ybnnnsstt9yCYRynFI8+DrJmzRrt9/vHLCYkxOGpek8++aTWWmul1KjPPvroo1pKOepzX/3qV4/5XX/961+1lFKbpjnmc9nXRRddpLu7u7XWWruuq7/1rW/piRMn6kAgMOqYjvb6+Mc/rrXWetu2bbq6ulpfdtllOpVKHfN43ve+92lAf+xjH8u9d++99+b2953vfOd1Xcsrr7xSA9owDL1161atlNIXXXRRbn9f/vKXc+fluq7WWutNmzbpsrIyDeiSkhJ96NAhfbzkuCSf9u/fTzwexzDSy8VblpV7Ok3T5Pzzz2fhwoVjTEM4HObLX/7yGBP5gx/8gL179x71u1566aVRzUGmaVJTU0NFRUVumyeeeIIvfOELaK1JJpP89Kc/pbOzk1gs9qrmaevWrQA8++yzdHR0sGrVKvr6+o65fXd3d86FOHIfWZfkjUbobW1tCCG45pprci7Gd77zHdasWZObijAwMMCHP/zh3DGeffbZFBcfv3G9x6W82NnZCYBhGNx77700NjYSi8VIJBIUFhbS2NiIz+fL+UxZ+dWvfsWWLVsAmDp1KkIImpqa6Ovr44477uCee+4Z811ZYGqtmTNnDt/+9rdZsGABqVSKJ598ks997nNEIhEeeughDhw4QENDA3fccQd33XUXhw4dor+/n97eXpRSlJWVUVtbm9t3WVkZN998MwDNzc25ZHYkEjnqedu2zdDQUO5hykpbW9sbBuDEiRNzvx86dAiACy64gNraWlpbW4nFYtx88808/fTT+P1+brnlFtavXw/ApEmT+K//+q+cAvinMcHXX3+9BnQgEND79+9/xW2zZmNgYEDPmDEjZ1puv/12/ctf/jJnuv1+v37ppZdGmW3XdfVpp52mAW1Zln722WdH7bupqSlnigC9YsWKUf+Px+N6165dury8XAP6Pe95zzGP8+Mf/3jue9avX3/UbWKxmG5sbNSAPvXUU7XjOFprrc8888zcMdx0002v61refvvtuc9+85vfzL1/8803j3IV7rrrLn3PPfdoIYQWQmjTNPUf//jHo7o5b2kT7Louu3fvzmmlkU+f4zhjw/RMYPHAAw+wZ88eAHw+H5dccglXXXUVs2bNQuv0Cpr/9V//NSrCDofDOZPn8/lobGwEYGBggJ/97Gecf/759Pf35+hNRy5d7/P5mDBhQs5Bb21tPeZ5ZT+rlOLQoUOkMo3n2VcqlSIajRKNRgEIhUK4rovruvT39+f2E4vFXtf1HOlKZLWr1poPfehDFBUV5f735S9/mc9+9rO5/3/0ox/l3e9+91Gv+VvaBA8MDORMsBCC++67j4GBAbZt20Z/fz/BYJDrrruOa6+9NgekRCLBz3/+89w+li1bxvz58wG4+eab+cAHPoDWmscff5z169dz6qmn5gCYNXVKKX70ox9x8OBBVq9ezf79+9MXwDRxHIdTTjmFuXPnjjneRCKB67o5/y0UClFQUDBmu2ykqZTiE5/4BAUFBWNSQK7r5sxkIpHAcRwSicQoc/x6pbS09KjgnTZtGl/84he59dZbEUIwODiY+9/ixYv52te+lnODjmce8B8OwK6uLnp6ehBCkEqluOmmm8Zss2fPHi677DLy8vJygcSmTZtyF8rj8fD9738fpRShUIi8vDwikUgugMgCcGhoiOHh4dwNv/3228fkAR3Hoba2lh/84Aej0hUjc3dZAA4MDNDX15cD18gblz1WIQQtLS3HznuNeKiymnEkcF4vGEY+DD6fb9Q+brrpJpqbm7n77rtHAfanP/1pTjse71LgPxyA+/fvJ5VKZXpYNR6PB9M08Xg8+Hw+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pGiuvPJKHQqFtFIqRzTNkiq3bdv2ir0bgN62bZt+9NFHNaDPOeecUemWT33qUzo/P197vV5tGEbuZVmW9vv92u/364KCAv2Vr3xlTCI6+/vDDz+sp02bpmtra3VdXZ2ur6/X9fX1uq6uTjc0NOgLL7xQ9/f36/vvv18DeuHChVoppTs6OvQpp5wy5ngDgYD+wx/+oLXWuqenR3/5y1/WgP7Sl76ktdb6qaee0h/96Ef1DTfcoG+88Ub9/ve/X9944436xhtv1Ndff72+6aab9JYtW44r4fTVxDzRNN/AwACf+cxnOHToEIsWLeL888+npaWFP//5zzzwwAM5rZE1K9lS1syZM3nkkUc4dOgQLS0t3Hnnnbiuy5e+9CXq6urIz89n6tSpOVJrJBLJaS2lFFu3bj0qL8913VztNB6P8+yzz/LVr371qP3FbW1t7Nu375jn197eTkdHR04jxWIxhBB897vfZf369dTV1fHJT36SwsJC/vjHP/LMM8/w7W9/m4aGhlzpDciV0f7jP/6D559//hWv6dDQ0Cg61rgJfhV5+eWXaWpqYubMmTz++OM5xm9JSQnf//73ef7557nuuutyAFi9ejVlZWUsXbo0x0B58cUXueOOOwB45zvfmeMHjvT1sv3EhmFgWRZ/+tOfaGpqyj0IRzZ633HHHTz44IM5etbRUiwf/OAHWbBgAeFwmOeff54777yTwsJCvv/971NRUcGECROYO3durglJKUUymWTlypUAfPOb3+Sqq64C4Pzzz2fRokXs3r2bRCLB8uXLWbt2Le3t7bnj+vnPf85zzz1HLBajpaWF7373uwSDQW655RbqMwOPlixZMqq1ddwEv4o89NBDGtDnnXfeqPezrYvXXXed1lrrJUuWjDJXDzzwgNZa6+bmZn366afn3j/ppJP0jh07cvu57777NKDnzp2bM/mvpSqQNX+LFi0aY9KOZuKyZrasrEx3dXWN+t+vf/1rDegZM2boWCymTzrpJA3o559/PrdNNBrV9fX12ufz6b179+p169bpq6++elQ9eqSsX79eA7q0tPS4tlm+qU0wQF1dHZZlsW7dOh5//HHOOeccBgYGeOCBBwCor68ftf2VV17J6aefzrJly2hqauLyyy9n+/btLF26FMdxWLduHZdddhmPPPIIM2fOzH0ulUrR0tJCZWXlKNZMNqKMRCIIIcjLy0tPvcrw5yzLek0TFrJmO6vljpUw9nq9zJkzh82bN3PnnXdSWlpKQUEB99xzD62trUybNo2DBw/y9re//RWvW/Y7hBC5398UcqI9EclkUr/nPe/JdZjNmDEj15UWCAT05s2btVJKL168WAP6t7/9rdZa66GhoZwmOeecc3Q4HNb9/f36jDPOyLFpEomE/tOf/qQBbZqmLiws1Oeee+4Ylk1PT48+5ZRT9KJFi3IN63feeacG9FlnnfWKnWTZ9//whz/kGr8PHjw46n9ZDThz5kytlNIvvviiLikpyZ1zQUFBToN/4xvf0IODg/qmm27SM2fO1EAuEBopq1evzmnctra2cQ34RvOAlmXxox/9iClTpvDwww/T29uLaZosXbqUz33uc8yfP59UKpXzg7KkU9d1mT59Oueeey633nornZ2dHDx4kD/84Q/853/+J/39/TiOk9NAQggSiQRDQ0Njcmg9PT1s2LABrTWHDh2isrJyVPfZsbReNodnmmaOxZPtBa6rqztqmsRxHJYsWcJf//pX7r777tw8l4kTJ3L55ZdzxRVXAPCtb32Lk08+mWuvvTbXC3w0jTqyXv6mGP92Ij0NSqkc80NrrVtbW/Xw8LAOhUI5Zkp2xMTVV189qtf3SI102WWXaWBML3DWB5w5c6betm2b7urqGuMD7ty5U3u9Xm1Zlt6yZYvWWuu1a9dqj8ejb7jhhmP6jdljaG9vH8VuueCCC0Zp2awGbGxs1KlUatSxh0IhvX37dr1+/Xq9atUq/fTTT+vVq1frHTt26Pb2dr1mzRo9PDw8atTGSA1YWVmpOzs73zQa8IQzwdmb8cUvflHX1tbqZ5555qjOfn9/v968efMowI6Uc845RwP6kUceOSohdu7cucc0pc3Nzdrr9WrTNPX27dtHATNL9TqWCU6lUvod73jHmJzeZz/72dw2v/rVr0YBUGutI5GI/spXvqKnTZt2zHk09fX1+qabbtLDw8NaKTXqGEYC8MigZ9wEvx52RMZkbNq0idbWVjZu3Mg555wzxuyVlJRQUlKS+zuRSPCnP/2JvXv3EgwGaW1tRQjBQw89xMGDB5FSsmzZslGTtrJdcB0dHezevZtwOEwsFqO3tzdXfVixYgU7d+7EcRyKi4vZvXs3kyZNYv78+aPaC7Jy991389hjjwFw/fXX09bWxrPPPsuPfvQjzjvvPC666KKjMlN+8pOfcPvtt+P1ernmmmuoq6vD7/ejtSaRSNDe3s6f//xnvv3tb1NaWsqtt9564pBK30pBSFYuvvhiDehbb71VDw8P61gsdtRXVgs899xzr1oJWbx4sf7Nb36jAT179uycWb/uuute9bNHvp566qkxx7x3797cqI958+bpcDisd+/erSsqKnKBUDwe17/73e9ybkBWA37gAx/IacXm5uYx+x4aGspVf97//vcftSUB0OXl5W8qE3zCrn2SrXB873vf495778UwjDGcOK01t9xyCx//+MeZN28eX/ziF+no6MA0zTHaQSnF0qVLc8TUbL1Ya80ll1zC0NDQmCDlWBqmqKhoVANQNtG7Z88e+vr6mDBhAj/84Q/Jy8tjxowZ/PCHP+T9738/e/bsIRQK5b57ZHL4ne98J7/61a/YtWsXc+bMobS0lLy8PLxeb26iQm9vLx6Ph8svv3xMkFFSUoLH46GsrGwU7f9ElxMWgO985zvZs2cP0Wg019F1JAANw8jl54qLi7nzzjtfdb99fX1ceOGFnHbaacjM0vbvete7eNe73vW6I/YjyQhnnnkmv/nNb5g3bx5z587NkU2vuuoqamtrGR4eprS0lMbGRhoaGrjoootyPdCXXHIJK1as4KGHHmLjxo2j5st4vV4aGxu55ppruOyyyzjrrLPGTA6bOXMmK1asoKSkhPz8/BO7+jHS5TqRCanhcPgVh+dIKXPTSI9kTh8LMMcaTftGWNSvlO441r6z20YiEfx+/yhNPHK7eDyeo3gZhpEbu3G08zny8ycS4/lNDcBxeevLOCN6XMYBOC7jAByXcRkH4LiMA3BcxmUcgOMyDsBxGZdxAI7LOADHZVzGATgu4wAcl3H5P5H/D97FUGNKe+RDAAAAAElFTkSuQmCC" alt="EARTH LJY"></div>
+</header>
+<nav id="nav"></nav>
+<div id="rb" class="hid" style="position:sticky;top:0;z-index:9;background:#0b1026;padding:6px 0"><button class="go" onclick="go('M')" style="width:100%">미션성공 탭으로 돌아가 바뀐 점수 확인하기</button></div>
+
+<!-- STAGE P1 -->
+<section id="P">
+<div class="pn"><h2>STAGE P1 · 천구의 요소 알기</h2>
+<div>학습 목표: 천체의 위치를 나타내는 기준이 되는 <span class="k">천구의 점과 선 14가지</span>를 그림과 함께 익힙니다. 용어 버튼을 하나씩 눌러 <span class="c">노란색으로 표시되는 부분</span>을 확인하세요. 14개를 모두 보면 다음 단계가 열립니다.</div></div>
+<div class="grid">
+ <div class="pn"><svg id="psv" viewBox="0 0 400 380"></svg>
+ <div class="sub">남쪽 위에서 비스듬히 본 모습입니다. 안쪽(뒤)이 <span class="c">북쪽</span>, 앞쪽이 <span class="c">남쪽</span>, 오른쪽이 <span class="c">동쪽</span>, 왼쪽이 <span class="c">서쪽</span>이며 관측 위도는 35°N로 가정했습니다. 점선 축은 천구의 북극과 남극을 잇는 자전축 연장선, 흰 점은 어떤 별입니다.</div></div>
+ <div class="pn"><h3>용어를 눌러 보세요 (<span id="pc">0</span>/14)</h3><div class="tg" id="ptg"></div>
+ <div class="fb" id="pdf">용어를 누르면 뜻과 위치가 나타납니다.</div><div id="pnx" style="margin-top:8px"></div></div>
+</div></section>
+
+<!-- STAGE P2 -->
+<section id="Q" class="hid">
+<div class="pn"><h2>STAGE P2 · 천구의 요소 맞추기</h2>
+<div>제시된 <span class="k">정의</span>를 읽고 그에 해당하는 <span class="c">천구의 점 또는 선의 이름</span>을 고르세요. 정답을 맞히면 그림에서 그 위치가 노란색으로 표시됩니다. 14문제를 모두 맞히면 STAGE A가 열립니다. 틀리면 내가 고른 용어의 뜻이 나와 정의를 비교할 수 있습니다.</div></div>
+<div class="grid">
+ <div class="pn"><svg id="qsv" viewBox="0 0 400 380"></svg>
+ <div class="sub">안쪽(뒤)이 북쪽, 앞쪽이 남쪽, 오른쪽이 동쪽, 왼쪽이 서쪽입니다.</div></div>
+ <div class="pn"><h3>문제 <span id="qn">1</span> / 14 : 다음 정의에 해당하는 것은?</h3><div class="fb" id="qdef" style="font-size:1.05rem"></div><div class="tg" id="qtg"></div>
+ <div class="fb" id="qfb" style="display:none"></div></div>
+</div></section>
+
+<!-- STAGE A -->
+<section id="A" class="hid">
+<div class="pn"><h2>STAGE A · 지평 좌표계의 한계와 적도 좌표계의 도입</h2>
+<div>학습 목표: 관측자의 <span class="c">위치와 시각</span>에 따라 변하는 지평 좌표계의 단점을 알고, 어디서나 같은 값을 쓰는 <span class="k">적도 좌표계</span>의 필요성을 깨닫습니다.</div>
+<div style="margin-top:8px">이름(학번) <input type="text" id="nm" placeholder="예: 2학년 3반 홍길동" style="max-width:300px"></div></div>
+<div class="grid">
+ <div class="pn"><h3>① 관측 장소와 시각을 바꿔 보세요 (별: 큰개자리 시리우스)</h3>
+  <div id="cities" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+  <div style="margin-top:8px">세계시(UT) <span id="hv" class="k"></span>시 / 한국시 <span id="kv" class="k"></span>시 (2026.10.28)</div>
+  <input type="range" id="hr" min="0" max="23" value="12">
+  <svg viewBox="0 0 300 300"><g id="dome"></g></svg>
+  <div class="sub">하늘을 올려다본 모습: 중심이 천정, 바깥 원이 지평선입니다. 별이 지평선 아래면 회색으로 표시됩니다.</div></div>
+ <div class="pn"><h3>② 같은 별, 다른 좌표</h3>
+  <table id="tb"></table>
+  <div class="fb" id="obs"></div>
+  <div class="sub" style="margin-top:6px">장소를 3곳 이상 눌러 비교하면 퀴즈가 열립니다.</div>
+  <div id="qa" class="hid" style="margin-top:10px"><h3>OX 퀴즈</h3>
+   <div>"적도 좌표계는 관측자의 위치나 시간에 관계없이 천구 상의 별의 위치가 항상 일정하게 유지된다."</div>
+   <div style="display:flex;gap:10px;margin-top:6px"><button class="go" id="ao">O</button><button class="go" id="ax">X</button></div>
+   <div class="fb" id="afb" style="display:none"></div></div></div>
+</div></section>
+
+<!-- STAGE B -->
+<section id="B" class="hid">
+<div class="pn"><h2>STAGE B · 적경과 춘분점 찾기</h2>
+<div>적경(<span class="k">α</span>)은 <span class="c">춘분점(0h)</span>에서 천구 적도를 따라 <span class="c">서 → 동(북극에서 볼 때 시계 반대 방향)</span>으로 잰 각이며 <span class="k">0h ~ 24h</span> 시간 단위로 나타냅니다. 24h = 360°이므로 <span class="k">1h = 15°</span>입니다.</div></div>
+<div class="grid">
+ <div class="pn"><svg id="rsv" viewBox="0 0 360 360"></svg><div class="sub">초록 바늘을 마우스(터치)로 드래그해 돌려 보세요.</div></div>
+ <div class="pn"><h3>미션</h3><div id="bt" style="font-size:1.1rem"></div>
+  <div style="margin:8px 0">현재 바늘: 적경 <span class="k" id="bro"></span> (= <span class="c" id="bdg"></span>)</div>
+  <button class="go" id="bck">확인</button> <button id="bhint">힌트</button>
+  <div class="fb" id="bfb" style="display:none"></div></div>
+</div></section>
+
+<!-- STAGE C -->
+<section id="C" class="hid">
+<div class="pn"><h2>STAGE C · 적위와 천구의 적도/극 읽기</h2>
+<div>적위(<span class="k">δ</span>)는 천구 적도에서 북쪽으로 <span class="c">+0° ~ +90°</span>, 남쪽으로 <span class="c">-0° ~ -90°</span>입니다. 천구의 북극은 +90°, 적도는 0°입니다.</div></div>
+<div class="grid">
+ <div class="pn"><h3>적위 각도 조절</h3><input type="range" id="dr" min="-90" max="90" step="0.5" value="0">
+  <div>적위 δ = <span class="k" id="dv"></span></div>
+  <svg viewBox="0 0 200 200" style="max-width:260px;display:block;margin:auto"><g id="sph"></g></svg>
+  <div class="sub">천구의 단면: 가로선이 천구 적도, 세로선이 천구의 자전축입니다.</div></div>
+ <div class="pn"><h3>미션</h3>
+  <div>큰개자리 시리우스 <span class="k">RA = 06h 45m, Dec = -16° 43′</span> 를 성도에서 찾아 클릭하세요.<br>① 슬라이더를 적위에 맞춘 뒤 ② 성도에서 위치를 클릭합니다.</div>
+  <div class="fb" id="cfb">성도를 클릭해 보세요.</div></div>
+</div>
+<div class="pn"><svg id="chart" viewBox="0 0 640 320"></svg><div class="sub">가로축 적경(0h → 24h, 오른쪽으로 증가) · 세로축 적위(+90° ~ -90°). 점선이 슬라이더 적위입니다.</div></div>
+</section>
+
+<!-- STAGE D -->
+<section id="D" class="hid">
+<div class="pn"><h2>STAGE D · 학습 점검 퀴즈와 서술형 문항</h2><div>틀리면 피드백이 나옵니다. 5문항을 모두 맞히면 서술형이 열립니다.</div><div id="qz"></div></div>
+<div class="pn hid" id="es"><h3>서술형 문항</h3>
+ <div>지평 좌표계 대신 적도 좌표계를 쓰는 이유를 쓰고, 적경과 적위가 각각 무엇을 나타내는지 기준점(춘분점, 천구 적도)을 포함해 서술하시오.</div>
+ <textarea id="et" rows="6" placeholder="여기에 답안을 작성하세요."></textarea>
+ <button class="go" id="eb" style="margin-top:8px">제출하고 피드백 받기</button>
+ <div class="fb" id="efb" style="display:none"></div></div>
+</section>
+
+<!-- MISSION -->
+<section id="M" class="hid">
+<div id="rp"></div>
+<div style="margin:10px 0"><button class="go" id="dl">이미지(PNG)로 다운로드</button> <span class="sub" id="dlm"></span></div>
+<div id="shot"></div>
+</section>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const S={aWrong:0,seen:new Set(),bWrong:0,cWrong:0,qFirst:{},qFix:{},qNow:{},essay:'',hits:0,eTry:0,done:{},bonus:{P:0,Q:0,A:0,B:0,C:0,D:0},qWrong:0,pv:new Set(),rd:null,redoW:{},redoS:{},open:{P:1}};
+const TABS=[['P','STAGE P1 요소 알기'],['Q','STAGE P2 요소 맞추기'],['A','STAGE A'],['B','STAGE B'],['C','STAGE C'],['D','STAGE D 퀴즈'],['M','미션성공']];
+function nav(){$('nav').innerHTML='';TABS.forEach(([k,t])=>{const b=document.createElement('button');b.textContent=t+(S.open[k]?'':' 🔒');b.className=(S.cur===k?'on ':'')+(S.open[k]?'':'lock');b.onclick=()=>S.open[k]&&go(k);$('nav').appendChild(b)})}
+function go(k){if(k==='M')S.rd=null;S.cur=k;TABS.forEach(([x])=>$(x).classList.toggle('hid',x!==k));nav();if($('rb'))$('rb').classList.toggle('hid',!(S.rd&&k!=='M'));if(k==='M')report();scrollTo(0,0)}
+function pass(k,next){if(S.rd===k){S.redoS[k]=Math.max(S.redoS[k]||0,90-10*(S.redoW[k]||0))}S.done[k]=1;S.open[next]=1;nav()}
+function fb(id,ok,html){const e=$(id);e.style.display='block';e.className='fb '+(ok?'ok':'no');e.innerHTML=html}
+const R=Math.PI/180;
+
+/* ---------- 천구의 요소 (P1, P2) ---------- */
+const PHI=35*R,CXs=200,CYs=190,RS=130,TT=0.27;
+const pt=(e,n,u)=>[CXs+RS*e,CYs-RS*(u*Math.cos(TT)+n*Math.sin(TT))];
+const nrm=v=>{const l=Math.hypot(...v);return v.map(x=>x/l)};
+const vE=[1,0,0],vN=[0,1,0],vU=[0,0,1],vA=[0,Math.cos(PHI),Math.sin(PHI)],vQ=[0,Math.sin(PHI),-Math.cos(PHI)];
+const neg=v=>v.map(x=>-x);
+const AL=40*R,AZ=120*R,vS=[Math.cos(AL)*Math.sin(AZ),Math.cos(AL)*Math.cos(AZ),Math.sin(AL)];
+const sa=vS[0]*vA[0]+vS[1]*vA[1]+vS[2]*vA[2];
+const vW=nrm(vS.map((x,i)=>x-sa*vA[i]));
+const vH=[Math.sin(AZ),Math.cos(AZ),0];
+const comb=(a,b,t)=>[0,1,2].map(i=>Math.cos(t*R)*a[i]+Math.sin(t*R)*b[i]);
+const CI={horizon:[vE,vN,315],meridian:[vU,vN,330],equator:[vE,vQ,300],hour:[vA,vW,70],vertical:[vU,vH,40]};
+function arcD(a,b){let d='';for(let t=0;t<=360;t+=4){const p=pt(...comb(a,b,t));d+=(t?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)}return d+'Z'}
+const PD={};for(const k in CI)PD[k]=arcD(CI[k][0],CI[k][1]);
+const TM=[
+{n:'천구',k:'c',t:'관측자를 중심으로, 모든 천체가 붙어 있는 것처럼 보이는 반지름이 무한대인 가상의 구입니다.'},
+{n:'천정',k:'p',d:vU,t:'관측자의 머리 위 수직선이 천구와 만나는 점입니다.'},
+{n:'천저',k:'p',d:neg(vU),t:'관측자의 발 아래 수직선이 천구와 만나는 점으로, 천정의 정반대 점입니다.'},
+{n:'수직권',k:'l',d:'vertical',t:'천정과 천저를 지나는 천구 위의 대원입니다. 천체의 고도와 방위각을 잴 때 기준이 됩니다.'},
+{n:'지평선',k:'l',d:'horizon',t:'관측자를 지나는 수평면(천정 방향과 수직인 면)을 연장하여 천구와 만나는 대원입니다.'},
+{n:'천구의 북극',k:'p',d:vA,t:'지구 자전축의 북쪽 연장선이 천구와 만나는 점입니다. 북극성이 그 가까이에 있습니다.'},
+{n:'천구의 남극',k:'p',d:neg(vA),t:'지구 자전축의 남쪽 연장선이 천구와 만나는 점으로, 천구의 북극의 정반대 점입니다.'},
+{n:'시간권',k:'l',d:'hour',t:'천구의 북극과 남극을 지나는 천구 위의 대원입니다. 적도 좌표계에서 적위를 재는 기준 선이 됩니다.'},
+{n:'천구의 적도',k:'l',d:'equator',t:'지구의 적도면을 연장하여 천구와 만나는 대원입니다. 적위가 0°인 선입니다.'},
+{n:'자오선',k:'l',d:'meridian',t:'천구의 북극, 천정, 남점, 천저, 북점을 지나는 천구 위의 대원입니다. 정남북 방향의 수직권이며 천체가 이 선을 지날 때 남중합니다.'},
+{n:'북점',k:'p',d:vN,t:'지평선과 자오선이 만나는 두 점 중 천구의 북극 쪽에 있는 점입니다.'},
+{n:'남점',k:'p',d:neg(vN),t:'지평선과 자오선이 만나는 두 점 중 북점의 반대쪽, 남쪽에 있는 점입니다.'},
+{n:'동점',k:'p',d:vE,t:'지평선과 천구의 적도가 만나는 두 점 중 정동쪽 점입니다. 남쪽에서 북쪽을 바라볼 때 오른쪽에 있습니다.'},
+{n:'서점',k:'p',d:neg(vE),t:'지평선과 천구의 적도가 만나는 두 점 중 정서쪽 점입니다. 남쪽에서 북쪽을 바라볼 때 왼쪽에 있습니다.'}];
+function sph(t,lab){let o=`<circle cx="${CXs}" cy="${CYs}" r="${RS}" fill="none" stroke="${t.k==='c'?'#ffd166':'#2b3768'}" stroke-width="${t.k==='c'?4:1.5}"/>`;
+ ['horizon','meridian','equator'].forEach(k=>o+=`<path d="${PD[k]}" fill="none" stroke="#3a4a86" stroke-dasharray="3 3"/>`);
+ const a1=pt(...vA),a2=pt(...neg(vA)),sp=pt(...vS);
+ o+=`<line x1="${a2[0]}" y1="${a2[1]}" x2="${a1[0]}" y2="${a1[1]}" stroke="#8892b0" stroke-dasharray="6 3"/><circle cx="${CXs}" cy="${CYs}" r="3" fill="#4dd9e8"/><circle cx="${sp[0]}" cy="${sp[1]}" r="4" fill="#e6ecff"/><text x="${sp[0]+7}" y="${sp[1]+4}" fill="#e6ecff" font-size="12">별</text>`;
+ let lp=[CXs,34];
+ if(t.k==='l'){o+=`<path d="${PD[t.d]}" fill="none" stroke="#ffd166" stroke-width="3.5"/>`;const c=CI[t.d];lp=pt(...comb(c[0],c[1],c[2]));}
+ if(t.k==='p'){const p=pt(...t.d);o+=`<circle cx="${p[0]}" cy="${p[1]}" r="8" fill="#ffd166"/>`;lp=[p[0],p[1]-14]}
+ if(lab)o+=`<text x="${lp[0]+(t.k==='c'?0:8)}" y="${lp[1]}" fill="#ffd166" font-size="15" text-anchor="${t.k==='c'?'middle':'start'}">${t.n}</text>`;
+ return o}
+function pInit(){$('psv').innerHTML=sph({k:'x'},false);
+ TM.forEach((t,i)=>{const b=document.createElement('button');b.textContent=t.n;b.onclick=()=>{S.pv.add(i);$('psv').innerHTML=sph(t,true);$('pdf').className='fb ok';$('pdf').innerHTML=`<span class="k">${t.n}</span> : ${t.t}`;
+  [...$('ptg').children].forEach((x,j)=>{x.className=j===i?'on':(S.pv.has(j)?'go':'')});$('pc').textContent=S.pv.size;
+  if(S.pv.size===TM.length)$('pnx').innerHTML='<div class="g">14개를 모두 확인했습니다!</div><button class="go" onclick="pass(\'P\',\'Q\');go(\'Q\')">STAGE P2 맞추기로 이동</button>'};$('ptg').appendChild(b)})}
+let qo=[],qn=0,qdone=false;
+function qStart(){qo=TM.map((_,i)=>i).sort(()=>Math.random()-.5);qn=0;qdone=false;qShow();
+ if(!$('qtg').children.length)TM.forEach((t,i)=>{const b=document.createElement('button');b.textContent=t.n;b.onclick=()=>qPick(i);$('qtg').appendChild(b)})}
+function qShow(){qdone=false;$('qsv').innerHTML=sph({k:'x'},false);$('qdef').innerHTML='<span class="k">정의</span> : '+TM[qo[qn]].t;$('qn').textContent=qn+1;$('qfb').style.display='none'}
+function qPick(j){if(qdone)return;const t=TM[qo[qn]];
+ if(j===qo[qn]){qdone=true;$('qsv').innerHTML=sph(t,true);
+  if(qn<TM.length-1)fb('qfb',1,`<span class="g">정답!</span> <span class="k">${t.n}</span> : ${t.t}<br><button class="go" onclick="qn++;qShow()">다음 문제</button>`);
+  else{pass('Q','A');fb('qfb',1,`<span class="g">정답! 14문제를 모두 맞혔습니다.</span> <span class="k">${t.n}</span> : ${t.t}<br><button class="go" onclick="go(\'A\')">STAGE A로 이동</button>`)}}
+ else{S.qWrong++;if(S.rd==='Q')S.redoW.Q=(S.redoW.Q||0)+1;fb('qfb',0,`<span class="r">아닙니다.</span> 내가 고른 <span class="k">${TM[j].n}</span>은(는) ${TM[j].t}<br>제시된 정의와 비교해 보고 다시 골라 보세요.`)}}
+
+/* ---------- STAGE A ---------- */
+const CITY=[['순천',34.95,127.49],['서울',37.57,126.98],['런던',51.5,-0.13],['시드니',-33.87,151.21]];
+const SRA=6.75,SDEC=-16.7167;let ci=0;
+function hor(lat,lon,ra,dec,h){const jd=Date.UTC(2026,9,28,0)/864e5+2440587.5+h/24;const d=jd-2451545;const lst=(280.46061837+360.98564736629*d+lon)%360;const H=(lst-ra*15)*R,f=lat*R,dl=dec*R;const alt=Math.asin(Math.sin(f)*Math.sin(dl)+Math.cos(f)*Math.cos(dl)*Math.cos(H))/R;const az=Math.atan2(Math.sin(H),Math.cos(H)*Math.sin(f)-Math.tan(dl)*Math.cos(f))/R+180;return[alt,(az+360)%360]}
+CITY.forEach((c,i)=>{const b=document.createElement('button');b.textContent=c[0];b.onclick=()=>{ci=i;S.seen.add(i);drawA()};$('cities').appendChild(b)});
+$('hr').oninput=drawA;
+function drawA(){const h=+$('hr').value;$('hv').textContent=h;$('kv').textContent=(h+9)%24;
+ [...$('cities').children].forEach((b,i)=>b.className=i===ci?'on':'');
+ const [alt,az]=hor(CITY[ci][1],CITY[ci][2],SRA,SDEC,h);
+ let g='<circle cx="150" cy="150" r="120" fill="none" stroke="#4dd9e8"/><circle cx="150" cy="150" r="60" fill="none" stroke="#2b3768"/><path d="M150 30V270M30 150H270" stroke="#2b3768"/>';
+ g+='<text x="150" y="22" fill="#ffd166" text-anchor="middle">북</text><text x="150" y="292" fill="#ffd166" text-anchor="middle">남</text><text x="12" y="155" fill="#ffd166">동</text><text x="276" y="155" fill="#ffd166">서</text>';
+ const r=Math.min(120,(90-alt)/90*120),x=150-r*Math.sin(az*R),y=150-r*Math.cos(az*R),col=alt<0?'#8892b0':'#ffd166';
+ g+=`<circle cx="${x}" cy="${y}" r="7" fill="${col}"/><text x="${x+10}" y="${y-8}" fill="${col}">시리우스</text>`;$('dome').innerHTML=g;
+ let t='<tr><th>관측지</th><th>고도</th><th>방위각</th><th>적경</th><th>적위</th></tr>';
+ CITY.forEach((c,i)=>{const [a,z]=hor(c[1],c[2],SRA,SDEC,h);t+=`<tr><td class="${i===ci?'k':''}">${c[0]}</td><td class="r">${a.toFixed(1)}°</td><td class="r">${z.toFixed(1)}°</td><td class="g">06h 45m</td><td class="g">-16° 43′</td></tr>`});$('tb').innerHTML=t;
+ $('obs').innerHTML=`<span class="r">빨강: 지평 좌표</span>는 장소·시각마다 달라지지만, <span class="g">초록: 적도 좌표</span>는 항상 같습니다.`;
+ if(S.seen.size>=3)$('qa').classList.remove('hid')}
+$('ao').onclick=()=>{fb('afb',1,'<span class="g">정답!</span> 적도 좌표계는 지구 자전축을 기준으로 한 천구 좌표여서 관측 장소·시각과 무관합니다. (별의 고유 운동은 매우 작아 무시합니다.)');if(!S.done.A||1)pass('A','B');$('afb').innerHTML+=' <button class="go" onclick="go(\'B\')">STAGE B로 이동</button>'};
+$('ax').onclick=()=>{S.aWrong++;if(S.rd==='A')S.redoW.A=(S.redoW.A||0)+1;fb('afb',0,'<span class="r">다시 생각해 보세요.</span> 위 표에서 <span class="g">적경·적위</span> 값이 장소와 시각을 바꿀 때 변했는지 확인해 보세요. 변한 것은 고도와 방위각입니다.')};
+
+/* ---------- STAGE B ---------- */
+const CX=180,CY=180,RR=130;let bh=0,drag=false,bi=0;const BT=[5,18];
+(function(){let s='<circle cx="180" cy="180" r="130" fill="none" stroke="#4dd9e8" stroke-width="2"/><circle cx="180" cy="180" r="4" fill="#ffd166"/><text x="180" y="176" fill="#9fb0e6" text-anchor="middle" font-size="11">천구 북극(위에서 봄)</text>';
+ for(let i=0;i<24;i++){const a=i*15*R,x1=CX+RR*Math.cos(a),y1=CY-RR*Math.sin(a),x2=CX+(RR+(i%6?8:14))*Math.cos(a),y2=CY-(RR+(i%6?8:14))*Math.sin(a);s+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${i%6?'#8892b0':'#ffd166'}"/>`;const lx=CX+(RR+27)*Math.cos(a),ly=CY-(RR+27)*Math.sin(a);s+=`<text x="${lx}" y="${ly+4}" fill="${i%6?'#9fb0e6':'#ffd166'}" text-anchor="middle" font-size="12">${i}h</text>`}
+ s+=`<circle cx="${CX+RR}" cy="${CY}" r="6" fill="#ff7aa2"/><text x="${CX+RR-8}" y="${CY+22}" fill="#ff7aa2" text-anchor="end" font-size="12">춘분점(0h)</text><path d="M255 250A90 90 0 0 0 270 200" stroke="#ff7aa2" fill="none"/><text x="270" y="262" fill="#ff7aa2" font-size="11">적경 증가</text><g id="nd"></g>`;$('rsv').innerHTML=s})();
+function needle(){const a=bh*15*R,x=CX+(RR+4)*Math.cos(a),y=CY-(RR+4)*Math.sin(a);$('nd').innerHTML=`<line x1="${CX}" y1="${CY}" x2="${x}" y2="${y}" stroke="#7ee081" stroke-width="3"/><circle cx="${x}" cy="${y}" r="8" fill="#7ee081"/>`;
+ const hh=Math.floor(bh),mm=Math.round((bh-hh)*60);$('bro').textContent=String(hh).padStart(2,'0')+'h '+String(mm).padStart(2,'0')+'m';$('bdg').textContent=(bh*15).toFixed(1)+'°'}
+function bset(e){const r=$('rsv').getBoundingClientRect(),x=(e.clientX-r.left)/r.width*360-CX,y=CY-(e.clientY-r.top)/r.height*360;bh=((Math.atan2(y,x)/R+360)%360)/15;needle()}
+$('rsv').onpointerdown=e=>{drag=true;$('rsv').setPointerCapture(e.pointerId);bset(e)};
+$('rsv').onpointermove=e=>drag&&bset(e);$('rsv').onpointerup=()=>drag=false;
+function bText(){$('bt').innerHTML=`제시된 별 ${bi+1}/2 : 적경 <span class="k">${String(BT[bi]).padStart(2,'0')}h</span> 위치에 바늘을 맞추고 확인을 누르세요.`}
+$('bck').onclick=()=>{const d=Math.min(Math.abs(bh-BT[bi]),24-Math.abs(bh-BT[bi]));
+ if(d<=0.25){if(bi<1){bi++;bText();fb('bfb',1,'<span class="g">정확합니다!</span> 다음 별로 넘어갑니다.')}else{pass('B','C');fb('bfb',1,'<span class="g">미션 성공!</span> 적경은 춘분점에서 동쪽으로 잰 시간 각입니다. <button class="go" onclick="go(\'C\')">STAGE C로 이동</button>');}}
+ else{S.bWrong++;if(S.rd==='B')S.redoW.B=(S.redoW.B||0)+1;fb('bfb',0,`<span class="r">아직 아닙니다.</span> 현재 ${d.toFixed(1)}h(=${(d*15).toFixed(0)}°) 차이입니다. 춘분점(0h)에서 <span class="c">시계 반대 방향</span>으로 ${BT[bi]}h × 15° = <span class="k">${BT[bi]*15}°</span> 돌린 곳입니다.`)}};
+$('bhint').onclick=()=>fb('bfb',1,'1h = 15°입니다. 춘분점(0h)에서 시계 반대 방향으로 시간 × 15°만큼 가면 그 적경입니다.');
+
+/* ---------- STAGE C ---------- */
+const cx=a=>40+a/24*580,cy=d=>10+(90-d)/180*280;
+const STARS=[['북극성',2.53,89.26],['리겔',5.24,-8.2],['베텔게우스',5.92,7.4],['시리우스',6.75,-16.72],['베가',18.62,38.8],['알타이르',19.85,8.9]];
+(function(){let s='';for(let h=0;h<=24;h+=3)s+=`<line x1="${cx(h)}" y1="10" x2="${cx(h)}" y2="290" stroke="#1d2850"/><text x="${cx(h)}" y="308" fill="#9fb0e6" text-anchor="middle" font-size="11">${h}h</text>`;
+ for(let d=-90;d<=90;d+=30)s+=`<line x1="40" y1="${cy(d)}" x2="620" y2="${cy(d)}" stroke="${d?'#1d2850':'#4dd9e8'}"/><text x="36" y="${cy(d)+4}" fill="#9fb0e6" text-anchor="end" font-size="11">${d>0?'+':''}${d}°</text>`;
+ s+=`<text x="46" y="${cy(0)-4}" fill="#4dd9e8" font-size="11">천구 적도</text><text x="46" y="24" fill="#4dd9e8" font-size="11">천구 북극 +90°</text>`;
+ STARS.slice(0,3).concat(STARS.slice(4)).forEach(([n,a,d])=>s+=`<circle cx="${cx(a)}" cy="${cy(d)}" r="3" fill="#e6ecff"/><text x="${cx(a)+6}" y="${cy(d)-5}" fill="#9fb0e6" font-size="10">${n}</text>`);
+ s+='<line id="dl2" x1="40" x2="620" stroke="#ffd166" stroke-dasharray="5 4"/><g id="mk"></g>';$('chart').innerHTML=s})();
+function dec(){const d=+$('dr').value;$('dv').textContent=(d>0?'+':'')+d.toFixed(1)+'°';$('dl2').setAttribute('y1',cy(d));$('dl2').setAttribute('y2',cy(d));
+ const x=100+70*Math.cos(d*R),y=100-70*Math.sin(d*R);$('sph').innerHTML=`<circle cx="100" cy="100" r="70" fill="none" stroke="#4dd9e8"/><line x1="30" y1="100" x2="170" y2="100" stroke="#4dd9e8"/><line x1="100" y1="25" x2="100" y2="175" stroke="#8892b0" stroke-dasharray="3"/><line x1="100" y1="100" x2="${x}" y2="${y}" stroke="#ffd166" stroke-width="2"/><circle cx="${x}" cy="${y}" r="5" fill="#ffd166"/><text x="100" y="20" fill="#9fb0e6" text-anchor="middle" font-size="10">북극 +90°</text><text x="100" y="192" fill="#9fb0e6" text-anchor="middle" font-size="10">남극 -90°</text><text x="172" y="96" fill="#4dd9e8" font-size="10">0°</text>`}
+$('dr').oninput=dec;
+$('chart').onclick=e=>{const r=$('chart').getBoundingClientRect(),X=(e.clientX-r.left)/r.width*640,Y=(e.clientY-r.top)/r.height*320;
+ const ra=(X-40)/580*24,de=90-(Y-10)/280*180;if(ra<0||ra>24||de>90||de<-90)return;
+ const sl=+$('dr').value;if(Math.abs(sl-SDEC)>2.5){fb('cfb',0,`먼저 슬라이더를 적위 <span class="k">-16° 43′(≈ -16.7°)</span> 근처로 맞추세요. (현재 ${sl.toFixed(1)}°)`);return}
+ const dr=Math.abs(ra-SRA),dd=Math.abs(de-SDEC);
+ if(dr<=0.35&&dd<=3.5){$('mk').innerHTML=`<circle cx="${cx(SRA)}" cy="${cy(SDEC)}" r="9" fill="none" stroke="#7ee081" stroke-width="2"/>`;pass('C','D');fb('cfb',1,'<span class="g">미션 성공!</span> 시리우스는 적경 06h 45m, 적위 -16° 43′로 어디서 보아도 같은 좌표입니다. <button class="go" onclick="go(\'D\')">STAGE D로 이동</button>')}
+ else{S.cWrong++;if(S.rd==='C')S.redoW.C=(S.redoW.C||0)+1;let m=[];if(dr>0.35)m.push(`적경이 약 ${dr.toFixed(1)}h 어긋났습니다(클릭 ${ra.toFixed(1)}h, 목표 6.75h).`);if(dd>3.5)m.push(`적위가 약 ${dd.toFixed(0)}° 어긋났습니다(클릭 ${de.toFixed(0)}°, 목표 -16.7°).`);fb('cfb',0,'<span class="r">조금 다릅니다.</span> '+m.join(' ')+' 적경은 가로축, 적위는 세로축입니다.')}};
+
+/* ---------- STAGE D ---------- */
+const Q=[
+['적경에 대한 설명으로 옳은 것은?',['천구 적도에서 북쪽으로 잰 각','춘분점에서 동쪽으로 천구 적도를 따라 잰 각(시간 단위)','지평선에서 별까지 잰 각','천정에서 별까지 잰 각'],1,'적경은 춘분점을 0h로 하여 서→동으로 잰 값(0h~24h)입니다. 천구 적도에서 남북으로 잰 각은 적위, 지평선에서 잰 각은 고도입니다.'],
+['천구 북극에 가장 가까워 적위가 약 +90°인 별은?',['시리우스','베가','북극성','리겔'],2,'북극성은 천구 북극 부근에 있어 적위가 약 +89°입니다. 시리우스(-16.7°), 리겔(-8.2°)은 남쪽, 베가(+38.8°)는 중위도 북쪽입니다.'],
+['천구 적도의 적위는?',['0°','+90°','-90°','+23.5°'],0,'천구 적도는 적위 0°이고, 북쪽은 +, 남쪽은 -로 나타내며 극은 ±90°입니다.'],
+['적경 6h는 몇 도에 해당하는가?',['6°','45°','90°','180°'],2,'24h = 360°이므로 1h = 15°입니다. 따라서 6h = 6 × 15° = 90°입니다.'],
+['지평 좌표계(고도, 방위각)의 단점으로 옳은 것은?',['별마다 값이 고정되어 구별이 어렵다','관측 장소와 시각에 따라 같은 별의 좌표가 달라진다','각도 단위를 쓸 수 없다','밤에만 사용할 수 있다'],1,'지평 좌표계는 관측자의 지평면이 기준이라 장소·시각에 따라 같은 별의 값이 변합니다. 그래서 공통 기준의 적도 좌표계를 사용합니다.']];
+function drawQ(){const z=$('qz');z.innerHTML='';Q.forEach((q,i)=>{const d=document.createElement('div');d.className='pn';d.innerHTML=`<div><span class="k">문항 ${i+1}.</span> ${q[0]}</div>`;
+ q[1].forEach((o,j)=>{const b=document.createElement('button');b.className='opt';b.textContent=`${j+1}) ${o}`;b.onclick=()=>pick(i,j,b,d);d.appendChild(b)});const f=document.createElement('div');f.className='fb';f.style.display='none';d.appendChild(f);z.appendChild(d)})}
+function pick(i,j,b,d){const q=Q[i],f=d.lastChild;f.style.display='block';
+ if(j===q[2]){b.className='opt right';if(S.qFirst[i]===undefined)S.qFirst[i]=S.qNow[i]?0:1;else if(S.qFirst[i]===0)S.qFix[i]=.5;f.className='fb ok';f.innerHTML='<span class="g">정답!</span> '+q[3];[...d.querySelectorAll('button')].forEach(x=>x.disabled=true);d.dataset.ok=1;
+  if(document.querySelectorAll('#qz [data-ok]').length===Q.length){$('es').classList.remove('hid');if(S.rd==='D')S.redoS.D=Math.max(S.redoS.D||0,90-10*(S.redoW.D||0))}}
+ else{b.className='opt wrong';S.qNow[i]=1;if(S.rd==='D')S.redoW.D=(S.redoW.D||0)+1;f.className='fb no';f.innerHTML='<span class="r">오답입니다.</span> 힌트: '+q[3].split('.')[0]+'. 다시 골라 보세요.'}}
+const MODEL='지평 좌표계(고도, 방위각)는 관측자의 <span class="k">위치와 시각</span>에 따라 같은 별의 좌표가 달라지므로 천체의 위치를 공통으로 나타내기 어렵다. 그래서 지구 자전축을 기준으로 한 <span class="k">적도 좌표계</span>를 사용하면 장소와 시간에 관계없이 별의 좌표가 일정하다. <span class="c">적경</span>은 <span class="c">춘분점</span>(0h)에서 천구의 적도를 따라 서쪽에서 동쪽으로 잰 각으로 0h~24h(1h = 15°)의 시간 단위로 나타내고, <span class="c">적위</span>는 <span class="c">천구의 적도</span>(0°)에서 북쪽(+)이나 남쪽(-)으로 잰 각으로 -90°~+90°로 나타낸다.';
+const KW=[['관측 위치(장소)에 따라 값이 달라지는 지평 좌표계의 한계',/위치|장소|지역|위도|경도|관측자/],['시간(시각)에 따라 값이 변한다는 점',/시간|시각|일주|자전|날짜/],['적경의 의미(동쪽으로 잰 시간 단위 각)',/적경/],['적경의 기준점인 춘분점',/춘분점/],['적위의 의미(적도에서 남북으로 잰 각)',/적위/],['적위의 기준인 천구 적도',/천구\s*적도|적도/]];
+$('eb').onclick=()=>{const t=$('et').value.trim();S.eTry++;if(t.length<20){fb('efb',0,'<span class="r">답안이 너무 짧습니다.</span> 이유와 적경·적위의 의미를 문장으로 써 보세요.');return}
+ const miss=KW.filter(k=>!k[1].test(t)),h=KW.length-miss.length;if(h>S.hits||!S.essay){S.hits=Math.max(S.hits,h);S.essay=t}
+ const ok=h>=4||S.eTry>=3;
+ fb('efb',h>=4,(h>=4?'<span class="g">잘 썼습니다!</span> ':'<span class="r">보완이 필요합니다.</span> ')+`핵심 요소 ${h}/6개를 포함했습니다.`+(miss.length?'<br>빠진 내용: '+miss.map(m=>'<span class="k">'+m[0]+'</span>').join(' / '):'')+'<div class="fb ok" style="margin-top:8px"><span class="g">모범답안</span><br>'+MODEL+'</div>'+(ok?'<br><button class="go" onclick="go(\'M\')">미션성공 탭으로 이동</button>':'<br>보완해서 다시 제출해 보세요.'));
+ if(ok){S.done.D=1;S.open.M=1;nav()}};
+
+/* ---------- 미션성공 ---------- */
+function score(){const f=(w,p,k)=>Math.max(Math.max(30,100-w*p),S.redoS[k]||0);
+ const qs=Object.values(S.qFirst).reduce((a,b)=>a+b,0)+Object.values(S.qFix).reduce((a,b)=>a+b,0);
+ const Qs=f(S.qWrong,8,'Q'),A=f(S.aWrong,30,'A'),B=f(S.bWrong,20,'B'),C=f(S.cWrong,15,'C'),D=Math.max(Math.min(100,qs/Q.length*100),S.redoS.D||0),E=S.hits/KW.length*100;
+ return{Qs,A,B,C,D,E,T:Qs*.1+A*.1+B*.15+C*.15+D*.25+E*.25}}
+const GC={A:'#7ee081',B:'#4dd9e8',C:'#ffd166',D:'#ff9f6b',F:'#ff7aa2'};
+function report(){const s=score(),t=s.T,gr=t>=90?'A':t>=80?'B':t>=70?'C':t>=60?'D':'F';
+ const nm=$('nm').value.trim()||'(이름 미입력)';
+ const rows=[['Q','STAGE P2 천구의 점과 선 맞추기',s.Qs,'STAGE P2'],['A','STAGE A 지평·적도 좌표계 비교',s.A,'STAGE A'],['B','STAGE B 적경과 춘분점',s.B,'STAGE B'],['C','STAGE C 적위와 천구 적도/극',s.C,'STAGE C'],['D','STAGE D 학습 점검 퀴즈',s.D,'STAGE D'],['E','STAGE D 서술형 문항',s.E,'STAGE D']];
+ const msg={Q:S.qWrong?`천구 요소 맞추기에서 ${S.qWrong}회 오답이 있었습니다. 지평선·자오선·수직권·시간권처럼 헷갈리는 대원을 정의와 함께 다시 구분해 보세요.`:'천구의 점과 선 14가지를 정확히 구분했습니다.',A:S.aWrong?`OX 퀴즈에서 ${S.aWrong}회 오답이 있었습니다. 지평 좌표(고도·방위각)는 장소·시각에 따라 변하고 적도 좌표는 변하지 않는다는 비교를 다시 확인하세요.`:'장소와 시각을 바꿔 가며 지평 좌표가 달라지는 것을 관찰하고, 적도 좌표계의 불변성을 정확히 판단했습니다.',
+ B:S.bWrong?`바늘 맞추기에서 ${S.bWrong}회 오차가 있었습니다. 1h = 15°이고 춘분점에서 시계 반대 방향으로 센다는 규칙을 다시 적용해 보세요.`:'적경 눈금을 한 번에 정확히 읽었고 춘분점(0h)이 기준임을 잘 이해했습니다.',
+ C:S.cWrong?`성도 클릭에서 ${S.cWrong}회 빗나갔습니다. 가로축은 적경(h), 세로축은 적위(°)임을 구분해 좌표를 찾아보세요.`:'시리우스의 적경·적위를 성도에서 정확히 찾아 좌표 읽기에 숙달했습니다.',
+ D:s.D>=90?'핵심 개념 문항을 안정적으로 해결했습니다.':'일부 문항에서 오답이 있었습니다. 적경·적위의 정의와 1h = 15° 환산을 복습하세요.',
+ E:s.E>=90?'이유와 적경·적위의 기준점까지 빠짐없이 서술했습니다.':`서술에 ${KW.length-S.hits}개 핵심 요소가 빠졌습니다: `+KW.filter(k=>!k[1].test(S.essay)).map(k=>k[0]).join(', ')};
+ let h=`<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><div><h2 style="margin:0">미션 성공! 적도 좌표계 기초 학습 결과</h2><div class="sub">${nm} · 2026.10.28</div></div><div style="text-align:right;font-size:.85rem"><span class="k">EARTH LJY</span><br>earthljy@ai.jne.kr</div></div>
+ <div style="display:flex;align-items:center;gap:18px;margin:12px 0"><div class="grade" style="color:${GC[gr]}">${gr}</div><div>종합 점수 <span class="k">${t.toFixed(0)}점</span> / 100점<br><span class="sub">A 90↑ · B 80↑ · C 70↑ · D 60↑ · F 60 미만</span></div></div>`;
+ rows.forEach(r=>{const m=msg[r[0]];h+=`<div style="margin:8px 0"><span class="c">${r[1]}</span> <span class="k">${r[2].toFixed(0)}점</span><div class="bar"><i style="width:${r[2]}%;background:${r[2]>=90?'#7ee081':'#ffd166'}"></i></div><div class="sub">${m}${S.redoS[r[0]]?' <span class="g">· 다시 수행 완료(반영됨)</span>':''}</div></div>`});
+ h+=`<h3>내가 쓴 서술형 답안</h3><div class="fb">${(S.essay||'(미작성)').replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div>`;
+ const weak=rows.filter(r=>r[2]<90);
+ h+='<h3>과제 수행 과정 피드백</h3><div class="fb">'+`${nm} 학생은 지평 좌표계가 관측자에 따라 변하는 한계를 관찰한 뒤, 적경(춘분점 기준, 1h = 15°)과 적위(천구 적도 기준, ±90°)를 조작하며 천구 위 별의 위치를 읽는 과정을 수행했습니다. `+(weak.length?`특히 <span class="r">${weak.map(w=>w[1]).join(', ')}</span> 영역에서 보완이 필요했으며, 이 부분을 다시 수행하면 더 높은 등급을 받을 수 있습니다.`:'모든 영역에서 안정적으로 개념을 이해했으며 다음 단계인 수성·화성 역행 분석으로 나아갈 준비가 되었습니다.')+'</div>';
+ h+=`<h3>${gr==='A'?'다음 단계':'등급 상향을 위한 추가 시뮬레이션'}</h3>`+(weak.length?'<div class="no-shot">'+weak.map(w=>`<div class="fb no">${w[1]} (${w[2].toFixed(0)}점) <button class="go" onclick="redo('${w[0]==='E'?'D':w[0]}')">${w[3]} 다시 수행</button></div>`).join('')+'</div>':'<div class="fb ok"><span class="g">부족한 수행 과정이 없습니다. 최고 등급 A입니다!</span></div>');
+ $('rp').innerHTML=h}
+function redo(k){S.rd=k;S.redoW[k]=0;if(k==='Q'){qStart()}if(k==='A'){S.seen.clear();$('afb').style.display='none';$('qa').classList.add('hid')}if(k==='B'){bi=0;bText();$('bfb').style.display='none'}if(k==='C'){$('mk').innerHTML='';$('cfb').className='fb';$('cfb').textContent='성도를 다시 클릭해 보세요.'}
+ if(k==='D'){drawQ();$('es').classList.add('hid');$('efb').style.display='none';S.eTry=0;S.qNow={}}go(k)}
+$('dl').onclick=async()=>{$('dlm').textContent='이미지를 만드는 중…';try{const cv=await html2canvas($('rp'),{backgroundColor:'#0b1026',scale:2});
+ const url=cv.toDataURL('image/png');$('shot').innerHTML=`<div class="sub">아래 이미지를 길게 누르거나 우클릭하여 저장할 수도 있습니다.</div><img src="${url}" alt="미션성공 결과">`;
+ const dls=await claude.use('downloads').catch(()=>null);
+ if(dls){const blob=await (await fetch(url)).blob();await dls.save({filename:'적도좌표계_미션결과.png',data:blob});$('dlm').textContent='저장 요청을 보냈습니다.'}else{$('dlm').textContent='이미지가 아래에 표시되었습니다.'}}
+ catch(e){$('dlm').textContent=$('shot').innerHTML?'아래 이미지를 저장해 주세요.':'이미지 생성에 실패했습니다.'}};
+window.claude=window.claude||{use:async()=>null};
+nav();go('P');pInit();qStart();drawA();needle();bText();dec();drawQ();
+</script></body></html>
+
+</body></html>
